@@ -58,16 +58,28 @@
             const firepower = new Image();
             firepower.src = "firepower.png"
             const rocket = new Image();
-            rocket.src = "rocket.png"
+            rocket.src = "rocket (leftcornerup).png"
             const rocket1 = new Image();
-            rocket1.src = "rocket1.png"
+            rocket1.src = "rocket (rightcornerup).png"
+            const rocket2 = new Image();
+            rocket2.src = "rocket (rightcornerdown).png"
+            const rocket3 = new Image();
+            rocket3.src = "rocket (leftcornerdown).png"
+            const rocketl = new Image();
+            rocketl.src = "rocket1.png"
             const meteor = new Image();
             meteor.src = "meteor.png"
             const coin = new Image();
             coin.src = "coin.png"
             const gear = new Image();
             gear.src = "gear.png"
+            let inc = 0
+            let rxpos
+            let rypos
 
+            let lastrocketcount = 0
+            let firerocket = [{ id: rocket, rxpos: -10, rypos: -10, rspeed: 5 }]
+            let rocketfireflag = false
             let weights = [1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4] // random prize generating array
             let prize = []
             let score = 0;
@@ -121,7 +133,8 @@
                 ArrowLeft: false,
                 ArrowUp: false,
                 ArrowDown: false,
-                Spacebar: false
+                Spacebar: false,
+                Enter: false
             }
 
 
@@ -130,7 +143,9 @@
                 if (e.key == "ArrowLeft") keys.ArrowLeft = true;
                 if (e.key == "ArrowUp") keys.ArrowUp = true;
                 if (e.key == "ArrowDown") keys.ArrowDown = true;
-                //  if (e.key == " ") keys.Spacebar = true;
+                if (e.key == "Enter") keys.Enter = true;
+                if (e.key == " ") keys.Spacebar = true;
+
             });
 
             $(window).on('keyup', function (e) {
@@ -138,7 +153,8 @@
                 if (e.key == "ArrowLeft") keys.ArrowLeft = false;
                 if (e.key == "ArrowUp") keys.ArrowUp = false;
                 if (e.key == "ArrowDown") keys.ArrowDown = false;
-                //  if (e.key == " ") keys.Spacebar = false;
+                if (e.key == "Enter") keys.Enter = false;
+                if (e.key == " ") keys.Spacebar = false;
             });
 
 
@@ -155,6 +171,7 @@
                 if (keys.ArrowLeft && keys.ArrowDown) pxpos -= playerspeed; pypos += playerspeed;
                 if (keys.ArrowRight && keys.ArrowUp) pxpos += playerspeed; pypos -= playerspeed;
                 if (keys.ArrowRight && keys.ArrowDown) pxpos += playerspeed; pypos += playerspeed;
+
 
 
                 // Draw Player
@@ -245,11 +262,81 @@
                 //  firepower logic end
 
                 // rocket logic start
+
                 ctx.drawImage(rocket, canvas.width - 150, 20, 40, 40)
                 ctx.fillStyle = "white"
                 ctx.font = "20px Arial"
-                rocketcount = Math.floor(rocketcountinc / 20)
+                rocketcount = Math.floor(rocketcountinc / 1)
                 ctx.fillText(rocketcount, canvas.width - 110, 50)
+
+                // if (lastrocketcount != rocketcount) {
+                //     firerocket.push({ id: rocket, rxpos: -10, rypos: -10, rspeed: 5 })
+                //     lastrocketcount = rocketcount
+                //     console.log(firerocket)
+
+                // }
+                //  rocket fire logic start
+                function resettimer() {
+                    rocketfireflag = false
+                    inc = 0
+                }
+                if (keys.Enter && !rocketfireflag) {
+                    rxpos = pxpos
+                    rypos = pypos
+                    rocketfireflag = true
+                    // rockettimer = setTimeout(() => {
+                    //     resettimer()
+                    // }, 10000)
+
+                }
+                if (rocketfireflag) {
+
+                    inc = 3 + inc
+                    if (rxpos > canvas.width / 2 && rypos < canvas.height / 2) {
+                        ctx.drawImage(rocket2, rxpos - inc, rypos + inc, 100, 100)
+                        if (rxpos - inc < canvas.width / 2 && rypos + inc > canvas.height / 2) {
+                            resettimer()
+
+                        }
+                    }
+                    else if (rxpos > canvas.width / 2 && rypos > canvas.height / 2) {
+                        ctx.drawImage(rocket1, rxpos - inc, rypos - inc, 100, 100)
+                        if (rxpos - inc < canvas.width / 2 && rypos - inc < canvas.height / 2) {
+                            resettimer()
+                        }
+                    }
+                    else if (rxpos < canvas.width / 2 && rypos > canvas.height / 2) {
+                        ctx.drawImage(rocket, rxpos + inc, rypos - inc, 100, 100)
+                        if (rxpos + inc > canvas.width / 2 && rypos - inc < canvas.height / 2) {
+                            resettimer()
+                        }
+
+                    }
+                    else if (rxpos < canvas.width / 2 && rypos < canvas.height / 2) {
+                        ctx.drawImage(rocket3, rxpos + inc, rypos + inc, 100, 100)
+                        if (rxpos + inc > canvas.width / 2 && rypos + inc > canvas.height / 2) {
+                            resettimer()
+                        }
+                    }
+
+                    // ctx.drawImage(rocket3, rxpos + inc, rypos - inc, 100, 100)
+                }
+
+
+
+
+                // rocketcount--    
+                // lastrocketcount = rocketcount
+
+
+
+
+
+
+                // rocket fire logic end
+
+
+
                 // rocket logic end
 
                 // fire logic start
@@ -260,12 +347,7 @@
 
                 }
 
-                $(window).on('keydown', function (e) {
 
-                    if (e.key == " ")
-                        keys.Spacebar = true
-
-                })
                 if (keys.Spacebar) { // Spacebar to fire
                     fireBullet();
                     keys.Spacebar = false;
@@ -300,16 +382,16 @@
                                 ctx.clearRect(enemy.expos, enemy.eypos, 50, 50) // Clear the enemy from the canvas
                                 let flag = weights[Math.floor(Math.random() * weights.length)]
                                 if (flag == 1) {
-                                    prize.push({ id: coin, lxpox: enemy.expos, lypos: enemy.eypos, lspeed: enemy.speed, type: "score" })
+                                    prize.push({ id: coin, lxpos: enemy.expos, lypos: enemy.eypos, lspeed: enemy.speed, type: "score" })
                                 }
                                 else if (flag == 4) {
-                                    prize.push({ id: firepower, lxpox: enemy.expos, lypos: enemy.eypos, lspeed: enemy.speed, type: "firepower" })
+                                    prize.push({ id: firepower, lxpos: enemy.expos, lypos: enemy.eypos, lspeed: enemy.speed, type: "firepower" })
                                 }
                                 else if (flag == 2) {
-                                    prize.push({ id: gear, lxpox: enemy.expos, lypos: enemy.eypos, lspeed: enemy.speed, type: "gear" })
+                                    prize.push({ id: gear, lxpos: enemy.expos, lypos: enemy.eypos, lspeed: enemy.speed, type: "gear" })
                                 }
                                 else if (flag == 3) {
-                                    prize.push({ id: life, lxpox: enemy.expos, lypos: enemy.eypos, lspeed: enemy.speed, type: "life" })
+                                    prize.push({ id: life, lxpos: enemy.expos, lypos: enemy.eypos, lspeed: enemy.speed, type: "life" })
                                 }
                                 // console.log(prize)
 
@@ -332,14 +414,20 @@
                 });
 
                 // enemy hit logic end
+                // rocket fire logic start
+
+
+
+
+                // rocket fire logic end
 
                 // prize logic start
                 prize.forEach((prizeitem, prizeindex) => {
-                    ctx.drawImage(prizeitem.id, prizeitem.lxpox, prizeitem.lypos, 30, 30) // Draw explosion at the enemy's position
-                    prizeitem.lypos += prizeitem.lspeed; // Move the explosion downwards
+                    ctx.drawImage(prizeitem.id, prizeitem.lxpos, prizeitem.lypos, 30, 30)
+                    prizeitem.lypos += prizeitem.lspeed;
 
-                    if (prizeitem.lxpox < pxpos + 50 &&
-                        prizeitem.lxpox + 50 > pxpos &&
+                    if (prizeitem.lxpos < pxpos + 50 &&
+                        prizeitem.lxpos + 50 > pxpos &&
                         prizeitem.lypos < pypos + 50 &&
                         prizeitem.lypos + 50 > pypos) {
                         if (prizeitem.type == "life") {
