@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jet Test</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+
+<body style="background: #222; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0;">
+
+    <canvas id="gameCanvas" width="1000" height="700" style="border:2px solid white; background: #000;"></canvas>
+
+    <script>
+        $(document).ready(function () {
+            const canvas = document.getElementById("gameCanvas");
+            const ctx = canvas.getContext("2d");
+            let pxpos = ((canvas.width) / 2) - 25, pypos = canvas.height - 100;
+            const playerspeed = 10;
+            let isinvincible = false;
+            let speedinc = 1;
+            // images objects
+            const jetImg = new Image();
+            jetImg.src = "jet.png"
+            const ufo1 = new Image();
+            ufo1.src = "ufo1.png"
+            const ufo2 = new Image();
+            ufo2.src = "ufo2.png"
+            const ufo3 = new Image();
+            ufo3.src = "ufo3.png"
+            const ufo4 = new Image();
+            ufo4.src = "ufo4.png"
+            const ufo5 = new Image();
+            ufo5.src = "ufo5.png"
+            const ufo6 = new Image();
+            ufo6.src = "ufo6.png"
+            const ufo7 = new Image();
+            ufo7.src = "ufo7.png"
+            const ufo8 = new Image();
+            ufo8.src = "ufo8.png"
+            const ufo9 = new Image();
+            ufo9.src = "ufo9.png"
+            const ufo10 = new Image();
+            ufo10.src = "ufo10.png"
+            const ufo11 = new Image();
+            ufo11.src = "ufo11.png"
+            const ufo12 = new Image();
+            ufo12.src = "ufo12.png"
+            const life = new Image();
+            life.src = "life.png"
+            const bullet = new Image();
+            bullet.src = "bullet.png"
+            const octo = new Image();
+            octo.src = "octo.png"
+            const ten1 = new Image();
+            ten1.src = "ten1.png"
+            const firepower = new Image();
+            firepower.src = "firepower.png"
+            const rocket = new Image();
+            rocket.src = "rocket.png"
+            const rocket1 = new Image();
+            rocket1.src = "rocket1.png"
+            const meteor = new Image();
+            meteor.src = "meteor.png"
+            const coin = new Image();
+            coin.src = "coin.png"
+            const gear = new Image();
+            gear.src = "gear.png"
+
+            let weights = [1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4] // Gravity strength
+            let prize = []
+            let score = 0;
+            let lifecount = 3; // Initial life count
+            let firepowercount = 0; // Initial firepower count
+            let firepowerinc = 0; // firepower increment
+            let rocketcount = 0; // Initial rocket count
+            let rocketcountinc = 0; // rocket increment
+            //array for bullets
+            let bullets = [];
+            const bulletSpeed = 10;
+            // 1. Array to hold multiple enemies
+            pushflag = true
+            let enemies = [
+                { id: ufo1, expos: 400, eypos: 100, speed: 2 * speedinc, killcount: 4 },
+                { id: ufo2, expos: 700, eypos: 200, speed: 1.5 * speedinc, killcount: 4 },
+                { id: ufo3, expos: 100, eypos: 250, speed: 3 * speedinc, killcount: 4 },
+                { id: ufo4, expos: 200, eypos: 350, speed: 4 * speedinc, killcount: 4 },
+                { id: ufo5, expos: 300, eypos: 150, speed: 2.5 * speedinc, killcount: 4 },
+                { id: ufo6, expos: 500, eypos: 300, speed: 1 * speedinc, killcount: 4 }
+                // { id: ufo7, expos: 600, eypos: 400, speed: 3.5 },
+                // { id: ufo8, expos: 800, eypos: 250, speed: 2.8 },
+                // { id: ufo9, expos: 900, eypos: 350, speed: 1.2 },
+                // { id: ufo10, expos: 150, eypos: 450, speed: 4.5 },
+                // { id: ufo11, expos: 250, eypos: 550, speed: 3.2 },
+                // { id: ufo12, expos: 350, eypos: 650, speed: 2.3 }
+            ];
+            //  boss
+            let boss = {
+                x: 200,
+                y: -300,        // Start above the screen
+                active: false,
+                hp: 100,
+                speedX: 2,
+                // We define 4 tentacles, each with a different 'phase' for the wiggle
+                tentacles: [
+                    { xOff: -40, phase: 0 },
+                    { xOff: -15, phase: 2 },
+                    { xOff: 15, phase: 4 },
+                    { xOff: 40, phase: 6 }
+                ]
+            };
+            // boss
+
+            enemies.forEach(enemy => {
+                enemy.expos = Math.random() * (canvas.width - 50); // Random x position within canvas width
+            })
+
+            let keys = {
+                ArrowRight: false,
+                ArrowLeft: false,
+                ArrowUp: false,
+                ArrowDown: false,
+                Spacebar: false
+            }
+
+
+            $(window).on('keydown', function (e) {
+                if (e.key == "ArrowRight") keys.ArrowRight = true;
+                if (e.key == "ArrowLeft") keys.ArrowLeft = true;
+                if (e.key == "ArrowUp") keys.ArrowUp = true;
+                if (e.key == "ArrowDown") keys.ArrowDown = true;
+                //  if (e.key == " ") keys.Spacebar = true;
+            });
+
+            $(window).on('keyup', function (e) {
+                if (e.key == "ArrowRight") keys.ArrowRight = false;
+                if (e.key == "ArrowLeft") keys.ArrowLeft = false;
+                if (e.key == "ArrowUp") keys.ArrowUp = false;
+                if (e.key == "ArrowDown") keys.ArrowDown = false;
+                //  if (e.key == " ") keys.Spacebar = false;
+            });
+
+
+            // Main Game Loop
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                // player animations start
+                if (keys.ArrowLeft) pxpos -= playerspeed;
+                if (keys.ArrowUp) pypos -= playerspeed;
+                if (keys.ArrowDown) pypos += playerspeed;
+                if (keys.ArrowRight) pxpos += playerspeed;
+                if (keys.ArrowLeft && keys.ArrowUp) pxpos -= playerspeed; pypos -= playerspeed;
+                if (keys.ArrowLeft && keys.ArrowDown) pxpos -= playerspeed; pypos += playerspeed;
+                if (keys.ArrowRight && keys.ArrowUp) pxpos += playerspeed; pypos -= playerspeed;
+                if (keys.ArrowRight && keys.ArrowDown) pxpos += playerspeed; pypos += playerspeed;
+
+
+                // Draw Player
+                if (jetImg.complete) {
+                    ctx.drawImage(jetImg, pxpos, pypos, 50, 50);
+                }
+                // player animations end
+
+
+
+                // enemy animation start
+                enemies.forEach(enemy => {
+
+                    enemy.eypos += enemy.speed; // Move the enemy downwards based on its speed
+                    enemyimg = enemy.id;
+                    if (enemy.eypos > canvas.height) {
+                        enemy.eypos = -50;
+
+                        enemy.expos = Math.random() * (canvas.width - 50);
+
+                    }
+
+                    ctx.drawImage(enemyimg, enemy.expos, enemy.eypos, 50, 50);
+                });
+                // enemy animation end 
+
+
+
+
+                //  Collision logic start
+                enemies.forEach(enemy => {
+                    if (pxpos < enemy.expos + 50 &&
+                        pxpos + 50 > enemy.expos &&
+                        pypos < enemy.eypos + 50 &&
+                        pypos + 50 > enemy.eypos) {
+                        if (!isinvincible) {
+                            // Remove one life
+                            lifecount--
+                            ctx.clearRect(enemy.expos, enemy.eypos, 50, 50) // Clear the enemy from the canvas
+                            enemy.eypos = -enemy.eypos - 10
+                            enemy.expos = Math.random() * (canvas.width - 50); // Respawn the enemy at a new random position
+                            isinvincible = true; // Set invincibility to prevent multiple collisions in a short time
+                            setTimeout(() => {
+                                isinvincible = false; // Reset invincibility after 3 seconds
+                            }, 3000)
+                        }
+                        // Collision detected, remove one life
+                        // You can also add some visual feedback here (like flashing the player or playing a sound)
+                    }
+
+                })
+
+                //collision logic end
+
+                //  score logic start
+                ctx.fillStyle = "white"
+                ctx.font = "20px Arial"
+                ctx.fillText("Score: " + score, canvas.width - 100, canvas.height - 20)
+
+                if (score > 1 && pushflag == true) {
+                    enemies.push(
+                        { id: ufo7, expos: 600, eypos: 700, speed: 3.5 * speedinc, killcount: 4 },
+                        { id: ufo8, expos: 800, eypos: 900, speed: 2.8 * speedinc, killcount: 4 },
+                        { id: ufo9, expos: 900, eypos: 950, speed: 1.2 * speedinc, killcount: 4 },
+                        { id: ufo10, expos: 150, eypos: 850, speed: 4.5 * speedinc, killcount: 4 },
+                        { id: ufo11, expos: 250, eypos: 750, speed: 3.2 * speedinc, killcount: 4 },
+                        { id: ufo12, expos: 350, eypos: 650, speed: 2.3 * speedinc, killcount: 4 })
+                    pushflag = false
+
+                }
+
+                //  score logic end
+
+
+                // Lives logic start     
+                ctx.drawImage(life, 20, 20, 40, 40)
+                ctx.fillStyle = "white"
+                ctx.font = "20px Arial"
+                ctx.fillText(lifecount, 60, 50)
+                //  lives logic end
+
+                // firepower logic start
+                ctx.drawImage(firepower, canvas.width - 80, 20, 40, 40)
+                ctx.fillStyle = "white"
+                ctx.font = "20px Arial"
+                firepowercount = Math.floor(firepowerinc / 10)
+                ctx.fillText(firepowercount, canvas.width - 40, 50)
+                //  firepower logic end
+
+                // rocket logic start
+                ctx.drawImage(rocket, canvas.width - 150, 20, 40, 40)
+                ctx.fillStyle = "white"
+                ctx.font = "20px Arial"
+                rocketcount = Math.floor(rocketcountinc / 20)
+                ctx.fillText(rocketcount, canvas.width - 110, 50)
+                // rocket logic end
+
+                // fire logic start
+                function fireBullet() {
+                    // Create a bullet object and add it to an array of bullets
+                    let bulletobject = { id: bullet, bxpos: pxpos, bypos: pypos - 25, speed: bulletSpeed }; // Start bullet at player's position};
+                    bullets.push(bulletobject);
+
+                }
+
+                $(window).on('keydown', function (e) {
+
+                    if (e.key == " ")
+                        keys.Spacebar = true
+
+                })
+                if (keys.Spacebar) { // Spacebar to fire
+                    fireBullet();
+                    keys.Spacebar = false;
+                }
+                bullets.forEach(bull => {
+                    bull.bypos -= bull.speed// Move the bullet upwards
+                    ctx.drawImage(bull.id, bull.bxpos + 20, bull.bypos, 10, 20); // Draw the bullet immediately when fired
+                    if (bull.bypos < 0)
+                        bullets.shift()
+
+                });
+
+                // fire logic end
+
+
+                // enemy hit logic start
+                bullets.forEach((bull, bullindex) => {
+                    enemies.forEach((enemy, enemyIndex) => {
+                        if (bull.bxpos < enemy.expos + 25 &&
+                            bull.bxpos + 25 > enemy.expos &&
+                            bull.bypos < enemy.eypos + 25 &&
+                            bull.bypos + 25 > enemy.eypos
+                        ) {
+                            enemy.killcount = enemy.killcount - firepowercount - 1
+                            bullets.splice(bullindex, 1) // Remove the bullet that hit the enemy
+                            console.log(firepowercount)
+                            console.log(enemy.killcount)
+
+                            if (enemy.killcount <= 0) {
+                                // deadenemy = enemy.id
+
+                                ctx.clearRect(enemy.expos, enemy.eypos, 50, 50) // Clear the enemy from the canvas
+                                let flag = weights[Math.floor(Math.random() * weights.length)]
+                                if (flag == 1) {
+                                    prize.push({ id: coin, lxpox: enemy.expos, lypos: enemy.eypos, lspeed: enemy.speed, type: "score" })
+                                }
+                                else if (flag == 4) {
+                                    prize.push({ id: firepower, lxpox: enemy.expos, lypos: enemy.eypos, lspeed: enemy.speed, type: "firepower" })
+                                }
+                                else if (flag == 2) {
+                                    prize.push({ id: gear, lxpox: enemy.expos, lypos: enemy.eypos, lspeed: enemy.speed, type: "gear" })
+                                }
+                                else if (flag == 3) {
+                                    prize.push({ id: life, lxpox: enemy.expos, lypos: enemy.eypos, lspeed: enemy.speed, type: "life" })
+                                }
+                                // console.log(prize)
+
+                                // ctx.drawImage(life, lxpos, lypos, 50, 50) // Draw explosion at the enemy's position
+                                // lypos += lspeed; // Move the explosion downwards
+
+
+                                enemy.eypos = -enemy.eypos - 10
+                                enemy.killcount = 4
+                                enemy.expos = Math.random() * (canvas.width - 50); // Respawn the enemy at a new random position
+                                bullets.splice(bullindex, 1) // Remove the bullet that hit the enemy
+                                score++
+
+                            }
+
+
+
+                        }
+                    })
+                });
+
+                // enemy hit logic end
+
+                // prize logic start
+                prize.forEach((prizeitem, prizeindex) => {
+                    ctx.drawImage(prizeitem.id, prizeitem.lxpox, prizeitem.lypos, 30, 30) // Draw explosion at the enemy's position
+                    prizeitem.lypos += prizeitem.lspeed; // Move the explosion downwards
+
+                    if (prizeitem.lxpox < pxpos + 50 &&
+                        prizeitem.lxpox + 50 > pxpos &&
+                        prizeitem.lypos < pypos + 50 &&
+                        prizeitem.lypos + 50 > pypos) {
+                        if (prizeitem.type == "life") {
+                            lifecount++
+                        }
+                        else if (prizeitem.type == "firepower") {
+                            firepowerinc++
+
+                        }
+                        else if (prizeitem.type == "score") {
+                            score += 10
+                        }
+                        else if (prizeitem.type == "gear") {
+                            rocketcountinc++
+                        }
+                        prize.splice(prizeindex, 1)
+                    }
+                })
+                // prize logic end
+
+                // boss logic start
+                function drawRotatedImage(image, x, y, width, height, angle) {
+                    // 1. Save the current state (so we don't mess up other drawings)
+                    ctx.save();
+
+                    // 2. Move the canvas to the rotation point
+                    ctx.translate(x, y);
+
+                    // 3. Rotate the canvas (angle is in radians: degrees * Math.PI / 180)
+                    ctx.rotate(angle);
+
+                    // 4. Draw the image
+                    // Note: We draw at -width/2 and -height/2 so the center is at the pivot point
+                    ctx.drawImage(image, -width / 2, -height / 2, width, height);
+
+                    // 5. Restore the canvas to normal
+                    ctx.restore();
+                }
+                // boss logic end
+
+                requestAnimationFrame(animate)
+
+            }
+
+
+            animate();
+        });
+    </script>
+</body>
+
+</html>
