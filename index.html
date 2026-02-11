@@ -73,14 +73,23 @@
             coin.src = "coin.png"
             const gear = new Image();
             gear.src = "gear.png"
+            const blast = new Image();
+            blast.src = "blast.png"
             let inc = 0
             let rxpos
             let rypos
 
+            let explosions = []
+
             let lastrocketcount = 0
             let firerocket = [{ id: rocket, rxpos: -10, rypos: -10, rspeed: 5 }]
             let rocketfireflag = false
-            let weights = [1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4] // random prize generating array
+            let weights = [1, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4] // random prize generating array
+            for (let i = 0; i <= 100; i++) {
+                weights.push(1)
+
+            }
+
             let prize = []
             let score = 0;
             let lifecount = 3; // Initial life count
@@ -91,6 +100,7 @@
             //array for bullets
             let bullets = [];
             const bulletSpeed = 10;
+            let blastflag = false
             // 1. Array to hold multiple enemies
             pushflag = true
             let enemies = [
@@ -210,6 +220,7 @@
                         if (!isinvincible) {
                             // Remove one life
                             lifecount--
+                            explosions.push({ id: blast, blastxpos: enemy.expos, blastypos: enemy.eypos, speed: enemy.speed, timer: 30 })
                             ctx.clearRect(enemy.expos, enemy.eypos, 50, 50) // Clear the enemy from the canvas
                             enemy.eypos = -enemy.eypos - 10
                             enemy.expos = Math.random() * (canvas.width - 50); // Respawn the enemy at a new random position
@@ -218,8 +229,7 @@
                                 isinvincible = false; // Reset invincibility after 3 seconds
                             }, 3000)
                         }
-                        // Collision detected, remove one life
-                        // You can also add some visual feedback here (like flashing the player or playing a sound)
+
                     }
 
                 })
@@ -376,10 +386,21 @@
                             console.log(firepowercount)
                             console.log(enemy.killcount)
 
+
                             if (enemy.killcount <= 0) {
                                 // deadenemy = enemy.id
+                                // blastflag = true
+                                // if (blastflag) {
+                                //     ctx.drawImage(blast, blastposx, blastposy, 50, 50) // Draw explosion at the enemy's position
+                                //     setTimeout(() => {
+                                //         blastflag = false
+                                //     }, 5000)
 
-                                ctx.clearRect(enemy.expos, enemy.eypos, 50, 50) // Clear the enemy from the canvas
+                                // }
+                                explosions.push({ id: blast, blastxpos: enemy.expos, blastypos: enemy.eypos, speed: enemy.speed, timer: 30 })
+
+
+                                // ctx.clearRect(enemy.expos, enemy.eypos, 50, 50) // Clear the enemy from the canvas
                                 let flag = weights[Math.floor(Math.random() * weights.length)]
                                 if (flag == 1) {
                                     prize.push({ id: coin, lxpos: enemy.expos, lypos: enemy.eypos, lspeed: enemy.speed, type: "score" })
@@ -393,10 +414,8 @@
                                 else if (flag == 3) {
                                     prize.push({ id: life, lxpos: enemy.expos, lypos: enemy.eypos, lspeed: enemy.speed, type: "life" })
                                 }
-                                // console.log(prize)
 
-                                // ctx.drawImage(life, lxpos, lypos, 50, 50) // Draw explosion at the enemy's position
-                                // lypos += lspeed; // Move the explosion downwards
+                                // console.log(prize)
 
 
                                 enemy.eypos = -enemy.eypos - 10
@@ -414,14 +433,22 @@
                 });
 
                 // enemy hit logic end
-                // rocket fire logic start
+                // explosion draw logic start
+                explosions.forEach((explosion, explosionindex) => {
+                    ctx.drawImage(explosion.id, explosion.blastxpos, explosion.blastypos, 50, 50)
+                    explosion.timer--
+                    if (explosion.timer <= 0) {
+                        explosions.splice(explosionindex, 1)
+                    }
+                })
 
 
 
 
-                // rocket fire logic end
+                // explosion draw logic end
 
                 // prize logic start
+
                 prize.forEach((prizeitem, prizeindex) => {
                     ctx.drawImage(prizeitem.id, prizeitem.lxpos, prizeitem.lypos, 30, 30)
                     prizeitem.lypos += prizeitem.lspeed;
@@ -446,6 +473,7 @@
                         prize.splice(prizeindex, 1)
                     }
                 })
+
                 // prize logic end
 
                 // boss logic start
