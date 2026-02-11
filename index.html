@@ -78,6 +78,7 @@
             let inc = 0
             let rxpos
             let rypos
+            let firedrockets = []
 
             let explosions = []
 
@@ -305,27 +306,40 @@
                     if (rxpos > canvas.width / 2 && rypos < canvas.height / 2) {
                         ctx.drawImage(rocket2, rxpos - inc, rypos + inc, 100, 100)
                         if (rxpos - inc < canvas.width / 2 && rypos + inc > canvas.height / 2) {
+                            firedrockets.push({ id: blast, rbxpos: rxpos - inc, rbypos: rypos + inc, timer: 30 })
+                            explo()
                             resettimer()
+
+
 
                         }
                     }
                     else if (rxpos > canvas.width / 2 && rypos > canvas.height / 2) {
                         ctx.drawImage(rocket1, rxpos - inc, rypos - inc, 100, 100)
                         if (rxpos - inc < canvas.width / 2 && rypos - inc < canvas.height / 2) {
+                            firedrockets.push({ id: blast, rbxpos: rxpos - inc, rbypos: rypos - inc, timer: 30 })
+                            explo()
                             resettimer()
+
                         }
                     }
                     else if (rxpos < canvas.width / 2 && rypos > canvas.height / 2) {
                         ctx.drawImage(rocket, rxpos + inc, rypos - inc, 100, 100)
                         if (rxpos + inc > canvas.width / 2 && rypos - inc < canvas.height / 2) {
+                            firedrockets.push({ id: blast, rbxpos: rxpos + inc, rbypos: rypos - inc, timer: 30 })
+                            explo()
                             resettimer()
+
                         }
 
                     }
                     else if (rxpos < canvas.width / 2 && rypos < canvas.height / 2) {
                         ctx.drawImage(rocket3, rxpos + inc, rypos + inc, 100, 100)
                         if (rxpos + inc > canvas.width / 2 && rypos + inc > canvas.height / 2) {
+                            firedrockets.push({ id: blast, rbxpos: rxpos + inc, rbypos: rypos + inc, timer: 30 })
+                            explo()
                             resettimer()
+
                         }
                     }
 
@@ -344,7 +358,23 @@
 
 
                 // rocket fire logic end
+                // rocket hit logic start
 
+
+                firedrockets.forEach((firedrocket, firedrocketindex) => {
+                    ctx.drawImage(firedrocket.id, firedrocket.rbxpos, firedrocket.rbypos, 200, 200)
+                    firedrocket.timer--
+                    if (firedrocket.timer <= 0) {
+                        firedrockets.splice(firedrocketindex, 1)
+                        // ctx.clearRect(firedrocket.rbxpos, firedrocket.rbypos, 200, 200)
+
+
+
+                    }
+
+
+                })
+                // rocket hit logic end
 
 
                 // rocket logic end
@@ -434,6 +464,7 @@
 
                 // enemy hit logic end
                 // explosion draw logic start
+
                 explosions.forEach((explosion, explosionindex) => {
                     ctx.drawImage(explosion.id, explosion.blastxpos, explosion.blastypos, 50, 50)
                     explosion.timer--
@@ -473,6 +504,41 @@
                         prize.splice(prizeindex, 1)
                     }
                 })
+                // test
+                function explo() {
+                    enemies.forEach(enemy => {
+                        explosions.push({ id: blast, blastxpos: enemy.expos, blastypos: enemy.eypos, speed: enemy.speed, timer: 30 })
+                        // ctx.clearRect(enemy.expos, enemy.eypos, 50, 50) // Clear the enemy from the canvas
+                        let flag = weights[Math.floor(Math.random() * weights.length)]
+                        if (flag == 1) {
+                            prize.push({ id: coin, lxpos: enemy.expos, lypos: enemy.eypos, lspeed: enemy.speed, type: "score" })
+                        }
+                        else if (flag == 4) {
+                            prize.push({ id: firepower, lxpos: enemy.expos, lypos: enemy.eypos, lspeed: enemy.speed, type: "firepower" })
+                        }
+                        else if (flag == 2) {
+                            prize.push({ id: gear, lxpos: enemy.expos, lypos: enemy.eypos, lspeed: enemy.speed, type: "gear" })
+                        }
+                        else if (flag == 3) {
+                            prize.push({ id: life, lxpos: enemy.expos, lypos: enemy.eypos, lspeed: enemy.speed, type: "life" })
+                        }
+
+                        // console.log(prize)
+
+                        enemy.eypos = -enemy.eypos - 10
+                        enemy.killcount = 4
+                        enemy.expos = Math.random() * (canvas.width - 50); // Respawn the enemy at a new random position
+                        score++
+
+
+
+
+
+
+
+                    })
+                }
+                // test
 
                 // prize logic end
 
