@@ -51,8 +51,12 @@
             life.src = "life.png"
             const bullet = new Image();
             bullet.src = "bullet.png"
-            const octo = new Image();
-            octo.src = "octo.png"
+            const boss1 = new Image();
+            boss1.src = "boss1.png"
+            const boss2 = new Image();
+            boss2.src = "boss2.png"
+            const boss3 = new Image();
+            boss3.src = "boss3.png"
             const ten1 = new Image();
             ten1.src = "ten1.png"
             const firepower = new Image();
@@ -83,7 +87,7 @@
             let explosions = []
 
             let lastrocketcount = 0
-            let firerocket = [{ id: rocket, rxpos: -10, rypos: -10, rspeed: 5 }]
+            let firerocket = []
             let rocketfireflag = false
             let weights = [1, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4] // random prize generating array
             for (let i = 0; i <= 100; i++) {
@@ -118,21 +122,45 @@
                 // { id: ufo11, expos: 250, eypos: 550, speed: 3.2 },
                 // { id: ufo12, expos: 350, eypos: 650, speed: 2.3 }
             ];
+            let enemyweights = [1, 2, 3, 4, 5, 6]
+            let firetimer = 0.5
+
+
             //  boss
-            let boss = {
-                x: 200,
-                y: -300,        // Start above the screen
+            let firstboss = {
+                img: boss1,
+                x: 400,
+                y: -200, // Start off-screen
                 active: false,
-                hp: 100,
                 speedX: 2,
-                // We define 4 tentacles, each with a different 'phase' for the wiggle
-                tentacles: [
-                    { xOff: -40, phase: 0 },
-                    { xOff: -15, phase: 2 },
-                    { xOff: 15, phase: 4 },
-                    { xOff: 40, phase: 6 }
-                ]
+                health: 50
             };
+            let boss1enemies = [];
+            let boss1enemiesarr = [
+                { id: ufo7, expos: firstboss.x, eypos: firstboss.y, speed: 3.5, timer: Math.floor(Math.random() * 300) + 30 * firetimer },
+                { id: ufo8, expos: firstboss.x, eypos: firstboss.y, speed: 2.8, timer: Math.floor(Math.random() * 300) + 30 * firetimer },
+                { id: ufo9, expos: firstboss.x, eypos: firstboss.y, speed: 1.2, timer: Math.floor(Math.random() * 300) + 30 * firetimer },
+                { id: ufo10, expos: firstboss.x, eypos: firstboss.y, speed: 4.5, timer: Math.floor(Math.random() * 300) + 30 * firetimer },
+                { id: ufo11, expos: firstboss.x, eypos: firstboss.y, speed: 3.2, timer: Math.floor(Math.random() * 300) + 30 * firetimer },
+                { id: ufo12, expos: firstboss.x, eypos: firstboss.y, speed: 2.3, timer: Math.floor(Math.random() * 300) + 30 * firetimer }];
+            let secondboss = {
+                img: boss2,
+                x: 400,
+                y: -200, // Start off-screen
+                active: false,
+                speedX: 2,
+                health: 50
+            };
+
+            let thirdboss = {
+                img: boss3,
+                x: 400,
+                y: -200, // Start off-screen
+                active: false,
+                speedX: 2,
+                health: 50
+            };
+
             // boss
 
             enemies.forEach(enemy => {
@@ -194,19 +222,22 @@
 
 
                 // enemy animation start
-                enemies.forEach(enemy => {
+                if (!firstboss.active) {
 
-                    enemy.eypos += enemy.speed; // Move the enemy downwards based on its speed
-                    enemyimg = enemy.id;
-                    if (enemy.eypos > canvas.height) {
-                        enemy.eypos = -50;
+                    enemies.forEach(enemy => {
 
-                        enemy.expos = Math.random() * (canvas.width - 50);
+                        enemy.eypos += enemy.speed; // Move the enemy downwards based on its speed
+                        enemyimg = enemy.id;
+                        if (enemy.eypos > canvas.height) {
+                            enemy.eypos = -50;
 
-                    }
+                            enemy.expos = Math.random() * (canvas.width - 50);
 
-                    ctx.drawImage(enemyimg, enemy.expos, enemy.eypos, 50, 50);
-                });
+                        }
+
+                        ctx.drawImage(enemyimg, enemy.expos, enemy.eypos, 50, 50);
+                    });
+                }
                 // enemy animation end 
 
 
@@ -242,7 +273,7 @@
                 ctx.font = "20px Arial"
                 ctx.fillText("Score: " + score, canvas.width - 100, canvas.height - 20)
 
-                if (score > 1 && pushflag == true) {
+                if (score > 1 && pushflag == true && !firstboss.active) {
                     enemies.push(
                         { id: ufo7, expos: 600, eypos: 700, speed: 3.5 * speedinc, killcount: 4 },
                         { id: ufo8, expos: 800, eypos: 900, speed: 2.8 * speedinc, killcount: 4 },
@@ -459,7 +490,9 @@
 
 
                         }
+
                     })
+
                 });
 
                 // enemy hit logic end
@@ -541,25 +574,108 @@
                 // test
 
                 // prize logic end
+                // boss 1 logic start
+                if (score >= 5) boss1fight()
+                if (score >= 100) boss2fight()
+                if (score >= 160) boss3fight()
+                function boss1fight() {
+
+                    firstboss.active = true;
+
+                    // Move boss into view
+                    if (firstboss.y < 50) firstboss.y += 1;
+                    // let firstbossyposition = firstboss.y
+
+
+                    // Boss Side-to-Side movement
+                    firstboss.x += firstboss.speedX;
+                    if (firstboss.x > canvas.width - 300 || firstboss.x < 0) firstboss.speedX *= -1;
+
+
+
+                    // --- DRAW BOSS HEAD ON TOP ---
+                    if (firstboss.y >= 50) {
+                        boss1enemiesarr.forEach((enemy, enemyIndex) => {
+                            let boss1flag = enemyweights[Math.floor(Math.random() * enemyweights.length)]
+                            if (boss1flag == enemyIndex) {
+                                enemy.timer--
+                                if (enemy.timer <= 0) {
+                                    enemy.eypos = firstboss.y + 100
+                                    enemy.expos = firstboss.x + 125
+                                    boss1enemies.push(enemy)
+                                    enemy.timer = Math.floor(Math.random() * 300) + 30 * firetimer
+                                }
+
+                            }
+                        })
+                        boss1enemies.forEach((enemy, enemyIndex) => {
+                            if (enemy.eypos > canvas.height) {
+                                boss1enemies.splice(enemyIndex, 1)
+                            }
+                            // enemy.expos = firstboss.x + 125
+
+                            enemy.eypos += enemy.speed; // Move the enemy downwards based on its speed
+                            enemyimg = enemy.id;
+
+
+                            ctx.drawImage(enemyimg, enemy.expos, enemy.eypos, 50, 50);
+                        });
+                    }
+                    ctx.drawImage(firstboss.img, firstboss.x, firstboss.y, 300, 200);
+                }
+                function boss2fight() {
+
+                    secondboss.active = true;
+
+                    // Move boss into view
+                    if (secondboss.y < 50) secondboss.y += 1;
+
+                    // Boss Side-to-Side movement
+                    secondboss.x += secondboss.speedX;
+                    if (secondboss.x > canvas.width - 300 || secondboss.x < 0) secondboss.speedX *= -1;
+
+
+
+                    // --- DRAW BOSS HEAD ON TOP ---
+                    ctx.drawImage(secondboss.img, secondboss.x, secondboss.y, 300, 200);
+
+                }
+                function boss3fight() {
+                    thirdboss.active = true;
+
+                    // Move boss into view
+                    if (thirdboss.y < 50) thirdboss.y += 1;
+
+                    // Boss Side-to-Side movement
+                    thirdboss.x += thirdboss.speedX;
+                    if (thirdboss.x > canvas.width - 300 || thirdboss.x < 0) thirdboss.speedX *= -1;
+
+
+
+                    // --- DRAW BOSS HEAD ON TOP ---
+                    ctx.drawImage(thirdboss.img, thirdboss.x, thirdboss.y, 300, 200);
+                }
+
+                // boss1 logic end
 
                 // boss logic start
-                function drawRotatedImage(image, x, y, width, height, angle) {
-                    // 1. Save the current state (so we don't mess up other drawings)
-                    ctx.save();
+                // function drawRotatedImage(image, x, y, width, height, angle) {
+                //     // 1. Save the current state (so we don't mess up other drawings)
+                //     ctx.save();
 
-                    // 2. Move the canvas to the rotation point
-                    ctx.translate(x, y);
+                //     // 2. Move the canvas to the rotation point
+                //     ctx.translate(x, y);
 
-                    // 3. Rotate the canvas (angle is in radians: degrees * Math.PI / 180)
-                    ctx.rotate(angle);
+                //     // 3. Rotate the canvas (angle is in radians: degrees * Math.PI / 180)
+                //     ctx.rotate(angle);
 
-                    // 4. Draw the image
-                    // Note: We draw at -width/2 and -height/2 so the center is at the pivot point
-                    ctx.drawImage(image, -width / 2, -height / 2, width, height);
+                //     // 4. Draw the image
+                //     // Note: We draw at -width/2 and -height/2 so the center is at the pivot point
+                //     ctx.drawImage(image, -width / 2, -height / 2, width, height);
 
-                    // 5. Restore the canvas to normal
-                    ctx.restore();
-                }
+                //     // 5. Restore the canvas to normal
+                //     ctx.restore();
+                // }
                 // boss logic end
 
                 requestAnimationFrame(animate)
