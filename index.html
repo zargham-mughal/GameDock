@@ -123,7 +123,7 @@
                 // { id: ufo12, expos: 350, eypos: 650, speed: 2.3 }
             ];
             let enemyweights = [1, 2, 3, 4, 5, 6]
-            let firetimer = 0.5
+            let firetimer = 1
 
 
             //  boss
@@ -133,16 +133,17 @@
                 y: -200, // Start off-screen
                 active: false,
                 speedX: 2,
-                health: 50
+                health: 100
             };
+            let bossexplosions = []
             let boss1enemies = [];
             let boss1enemiesarr = [
-                { id: ufo7, expos: firstboss.x, eypos: firstboss.y, speed: 3.5, timer: Math.floor(Math.random() * 300) + 30 * firetimer },
-                { id: ufo8, expos: firstboss.x, eypos: firstboss.y, speed: 2.8, timer: Math.floor(Math.random() * 300) + 30 * firetimer },
-                { id: ufo9, expos: firstboss.x, eypos: firstboss.y, speed: 1.2, timer: Math.floor(Math.random() * 300) + 30 * firetimer },
-                { id: ufo10, expos: firstboss.x, eypos: firstboss.y, speed: 4.5, timer: Math.floor(Math.random() * 300) + 30 * firetimer },
-                { id: ufo11, expos: firstboss.x, eypos: firstboss.y, speed: 3.2, timer: Math.floor(Math.random() * 300) + 30 * firetimer },
-                { id: ufo12, expos: firstboss.x, eypos: firstboss.y, speed: 2.3, timer: Math.floor(Math.random() * 300) + 30 * firetimer }];
+                { id: ufo7, expos: firstboss.x, eypos: firstboss.y, speed: 3.5, timer: Math.floor(Math.random() * 300) + 30 * firetimer, killcount: 4 },
+                { id: ufo8, expos: firstboss.x, eypos: firstboss.y, speed: 2.8, timer: Math.floor(Math.random() * 300) + 30 * firetimer, killcount: 4 },
+                { id: ufo9, expos: firstboss.x, eypos: firstboss.y, speed: 1.2, timer: Math.floor(Math.random() * 300) + 30 * firetimer, killcount: 4 },
+                { id: ufo10, expos: firstboss.x, eypos: firstboss.y, speed: 4.5, timer: Math.floor(Math.random() * 300) + 30 * firetimer, killcount: 4 },
+                { id: ufo11, expos: firstboss.x, eypos: firstboss.y, speed: 3.2, timer: Math.floor(Math.random() * 300) + 30 * firetimer, killcount: 4 },
+                { id: ufo12, expos: firstboss.x, eypos: firstboss.y, speed: 2.3, timer: Math.floor(Math.random() * 300) + 30 * firetimer, killcount: 4 }];
             let secondboss = {
                 img: boss2,
                 x: 400,
@@ -609,7 +610,7 @@
                             }
                         })
                         boss1enemies.forEach((enemy, enemyIndex) => {
-                            if (enemy.eypos > canvas.height) {
+                            if (enemy.eypos > canvas.height || enemy.killcount <= 0) {
                                 boss1enemies.splice(enemyIndex, 1)
                             }
                             // enemy.expos = firstboss.x + 125
@@ -622,6 +623,115 @@
                         });
                     }
                     ctx.drawImage(firstboss.img, firstboss.x, firstboss.y, 300, 200);
+
+                    //  Collision logic start
+                    boss1enemies.forEach((enemy, enemyIndex) => {
+                        if (pxpos < enemy.expos + 50 &&
+                            pxpos + 50 > enemy.expos &&
+                            pypos < enemy.eypos + 50 &&
+                            pypos + 50 > enemy.eypos) {
+                            if (!isinvincible) {
+                                // Remove one life
+                                lifecount--
+                                explosions.push({ id: blast, blastxpos: enemy.expos, blastypos: enemy.eypos, speed: enemy.speed, timer: 30 })
+                                boss1enemies.splice(enemyIndex, 1)
+                                isinvincible = true; // Set invincibility to prevent multiple collisions in a short time
+                                setTimeout(() => {
+                                    isinvincible = false; // Reset invincibility after 3 seconds
+                                }, 3000)
+                            }
+
+                        }
+
+                    })
+
+                    //collision logic 
+                    // boss explosion logic start
+                    bossexplosions.forEach((bossexplosion, bossexplosionindex) => {
+                        ctx.drawImage(bossexplosion.id, bossexplosion.blastxpos, bossexplosion.blastypos, 100, 100)
+                        bossexplosion.timer--
+                        if (bossexplosion.timer <= 0) {
+                            bossexplosions.splice(bossexplosionindex, 1)
+                        }
+                    })
+                    // bossexplosion logic end
+
+                    // enemy hit logic start
+                    bullets.forEach((bull, bullindex) => {
+                        if (bull.bxpos < firstboss.x + 300 &&
+                            bull.bxpos + 25 > firstboss.x &&
+                            bull.bypos < firstboss.y + 200 &&
+                            bull.bypos + 25 > firstboss.y
+                        ) {
+
+                            bossexplosions.push({ id: blast, blastxpos: bull.bxpos, blastypos: bull.bypos - 100, speed: 1, timer: 3 })
+                            bullets.splice(bullindex, 1)
+                            firstboss.health = firstboss.health - firepowercount - 1
+                            console.log(firstboss.health)
+                        }
+                        boss1enemies.forEach((enemy, enemyIndex) => {
+
+                            //                 // let firstboss = {
+                            //     img: boss1,
+                            //     x: 400,
+                            //     y: -200, // Start off-screen
+                            //     active: false,
+                            //     speedX: 2,
+                            //     health: 50
+                            // };
+                            if (bull.bxpos < enemy.expos + 25 &&
+                                bull.bxpos + 25 > enemy.expos &&
+                                bull.bypos < enemy.eypos + 25 &&
+                                bull.bypos + 25 > enemy.eypos
+                            ) {
+                                enemy.killcount = enemy.killcount - firepowercount - 1
+                                bullets.splice(bullindex, 1) // Remove the bullet that hit the enemy
+                                console.log(firepowercount)
+                                console.log(enemy.killcount)
+
+
+                                if (enemy.killcount <= 0) {
+                                    // deadenemy = enemy.id
+                                    // blastflag = true
+                                    // if (blastflag) {
+                                    //     ctx.drawImage(blast, blastposx, blastposy, 50, 50) // Draw explosion at the enemy's position
+                                    //     setTimeout(() => {
+                                    //         blastflag = false
+                                    //     }, 5000)
+
+                                    // }
+                                    explosions.push({ id: blast, blastxpos: enemy.expos, blastypos: enemy.eypos, speed: enemy.speed, timer: 30 })
+
+
+                                    // ctx.clearRect(enemy.expos, enemy.eypos, 50, 50) // Clear the enemy from the canvas
+                                    let flag = weights[Math.floor(Math.random() * weights.length)]
+                                    if (flag == 1) {
+                                        prize.push({ id: coin, lxpos: enemy.expos, lypos: enemy.eypos, lspeed: enemy.speed, type: "score" })
+                                    }
+                                    else if (flag == 4) {
+                                        prize.push({ id: firepower, lxpos: enemy.expos, lypos: enemy.eypos, lspeed: enemy.speed, type: "firepower" })
+                                    }
+                                    else if (flag == 2) {
+                                        prize.push({ id: gear, lxpos: enemy.expos, lypos: enemy.eypos, lspeed: enemy.speed, type: "gear" })
+                                    }
+                                    else if (flag == 3) {
+                                        prize.push({ id: life, lxpos: enemy.expos, lypos: enemy.eypos, lspeed: enemy.speed, type: "life" })
+                                    }
+                                    // console.log(prize)
+                                    bullets.splice(bullindex, 1) // Remove the bullet that hit the enemy
+                                    score++
+
+                                }
+
+
+
+                            }
+
+                        })
+
+                    });
+
+                    // enemy hit logic end
                 }
                 function boss2fight() {
 
