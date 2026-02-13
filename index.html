@@ -7,10 +7,91 @@
     <title>Jet Test</title>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
+<style>
+    body {
+        background: radial-gradient(circle, #1a1a2e 0%, #0f0f1b 100%);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        font-family: sans-serif;
+        color: #fff;
+        overflow: hidden;
+    }
+
+
+    #gameCanvas {
+        border: 2px solid #444;
+        box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+        background: #000;
+        /* Fallback */
+    }
+
+    /* Outer glowing container for the game */
+    .game-container {
+        position: relative;
+        padding: 10px;
+        background: #333;
+        border-radius: 8px;
+        box-shadow: 0 0 20px rgba(0, 255, 255, 0.2), inset 0 0 10px #000;
+        border: 4px solid #444;
+    }
+
+    #gameCanvas {
+        display: block;
+        background: #000;
+        border-radius: 4px;
+        cursor: crosshair;
+    }
+
+    /* Top Info Bar UI */
+    .ui-overlay {
+        position: absolute;
+        top: -50px;
+        left: 0;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        pointer-events: none;
+    }
+
+    .ui-card {
+        background: rgba(0, 0, 0, 0.7);
+        padding: 5px 15px;
+        border-radius: 5px;
+        border-bottom: 2px solid cyan;
+        font-size: 14px;
+        letter-spacing: 1px;
+    }
+
+    .controls-hint {
+        margin-top: 20px;
+        color: #888;
+        font-size: 12px;
+        text-transform: uppercase;
+    }
+
+    b {
+        color: cyan;
+    }
+</style>
 
 <body style="background: #222; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0;">
+    <div class="game-container">
+        <div class="ui-overlay">
+            <div class="ui-card">MISSION: <b>NEBULA STRIKE</b></div>
+            <div class="ui-card">PILOT: <b>ACE-01</b></div>
+        </div>
 
-    <canvas id="gameCanvas" width="1000" height="700" style="border:2px solid white; background: #000;"></canvas>
+        <canvas id="gameCanvas" width="1000" height="700" style="border:2px solid white; background: #000;"></canvas>
+    </div>
+
+    <div class="controls-hint">
+        [Arrows] Move • [Space] Fire • [Enter] Rocket • [Score 10/81/150] Bosses
+    </div>
+
 
     <script>
         $(document).ready(function () {
@@ -20,6 +101,17 @@
             const playerspeed = 10;
             let isinvincible = false;
             let speedinc = 0.2
+            // Starfield variables
+            let stars = [];
+            for (let i = 0; i < 100; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 2,
+                    speed: Math.random() * 3 + 1
+                });
+            }
+
             // images objects
             const jetImg = new Image();
             jetImg.src = "jet.webp"
@@ -133,24 +225,25 @@
             // 1. Array to hold multiple enemies
             let pushflag = true
             let enemies = [
-                { id: ufo1, expos: 400, eypos: -100 * Math.random() - 35 * Math.random(), speed: 2 * speedinc, killcount: 4 },
-                { id: ufo2, expos: 700, eypos: -205 * Math.random() - 35 * Math.random(), speed: 1.5 * speedinc, killcount: 4 },
-                { id: ufo3, expos: 100, eypos: -206 * Math.random() - 35 * Math.random(), speed: 3 * speedinc, killcount: 4 },
-                { id: ufo4, expos: 200, eypos: -307 * Math.random() - 35 * Math.random(), speed: 4 * speedinc, killcount: 4 },
-                { id: ufo5, expos: 300, eypos: -104 * Math.random() - 35 * Math.random(), speed: 2.5 * speedinc, killcount: 4 },
-                { id: ufo6, expos: 500, eypos: -303 * Math.random() - 35 * Math.random(), speed: 1 * speedinc, killcount: 4 },
-                { id: ufo7, expos: 600, eypos: -706 * Math.random() - 35 * Math.random(), speed: 3.5 * speedinc, killcount: 4 },
-                { id: ufo8, expos: 800, eypos: -906 * Math.random() - 35 * Math.random(), speed: 2.8 * speedinc, killcount: 4 },
-                { id: ufo9, expos: 900, eypos: -980 * Math.random() - 35 * Math.random(), speed: 1.2 * speedinc, killcount: 4 },
-                { id: ufo10, expos: 150, eypos: -507 * Math.random() - 35 * Math.random(), speed: 4.5 * speedinc, killcount: 4 },
-                { id: ufo11, expos: 250, eypos: -705 * Math.random() - 35 * Math.random(), speed: 3.2 * speedinc, killcount: 4 },
-                { id: ufo12, expos: 350, eypos: -604 * Math.random() - 35 * Math.random(), speed: 2.3 * speedinc, killcount: 4 }
+                { id: ufo1, expos: 400 + Math.random() * canvas.width, eypos: -100, speed: 2 * speedinc, killcount: 4 },
+                { id: ufo2, expos: 700 + Math.random() * canvas.width, eypos: -205, speed: 1.5 * speedinc, killcount: 4 },
+                { id: ufo3, expos: 100 + Math.random() * canvas.width, eypos: -206, speed: 3 * speedinc, killcount: 4 },
+                { id: ufo4, expos: 200 + Math.random() * canvas.width, eypos: -307, speed: 4 * speedinc, killcount: 4 },
+                { id: ufo5, expos: 300 + Math.random() * canvas.width, eypos: -104, speed: 2.5 * speedinc, killcount: 4 },
+                { id: ufo6, expos: 500 + Math.random() * canvas.width, eypos: -303, speed: 1 * speedinc, killcount: 4 },
+                { id: ufo7, expos: 600 + Math.random() * canvas.width, eypos: -706, speed: 3.5 * speedinc, killcount: 4 },
+                { id: ufo8, expos: 800 + Math.random() * canvas.width, eypos: -906, speed: 2.8 * speedinc, killcount: 4 },
+                { id: ufo9, expos: 900 + Math.random() * canvas.width, eypos: -980, speed: 1.2 * speedinc, killcount: 4 },
+                { id: ufo10, expos: 150 + Math.random() * canvas.width, eypos: -507, speed: 4.5 * speedinc, killcount: 4 },
+                { id: ufo11, expos: 250 + Math.random() * canvas.width, eypos: -705, speed: 3.2 * speedinc, killcount: 4 },
+                { id: ufo12, expos: 350 + Math.random() * canvas.width, eypos: -604, speed: 2.3 * speedinc, killcount: 4 }
 
             ];
             let enemyweights = [1, 2, 3, 4, 5, 6]
             let firetimer = 1
 
-
+            let isGameOver = false;
+            let isVictory = false;
             //  boss
             let firstboss = {
                 img: boss1,
@@ -222,8 +315,11 @@
             let ang2l = 0
             let ang1r = 0
             let ang2r = 0
-
+            let warningText = "";
+            let warningTimer = 0;
+            let currentPhase = ""; // Tracks which level/boss we are currently in
             // boss
+            let isStarted = false;
 
 
             let keys = {
@@ -277,31 +373,96 @@
                     ctx.drawImage(jetImg, pxpos, pypos, 50, 50);
                 }
                 // player animations end
+                // star animations start
 
-                // main stuff
 
-
-                // Change your calls in the animate function to this:
-                if (score <= 10) speedinc = 0.2; enemyspawning()
-                if (score >= 10 && firstboss.health > 0) {
-                    noscore = false
-                    bossfight(firstboss);
-
+                // 1. DRAW BACKGROUND (Stars)
+                drawStars(); // Call your starfield logic here
+                if (!isStarted) {
+                    displayStartScreen();
+                    requestAnimationFrame(animate);
+                    return; // Stop here until the user clicks start
+                }
+                // 2. CHECK FOR GAME OVER / VICTORY
+                if (lifecount <= 0) {
+                    isGameOver = true;
                 }
 
-                if (score <= 81 && firstboss.health <= 0) noscore = true; speedinc = 0.4; enemyspawning()
+                if (isGameOver) {
+                    displayEndScreen("GAME OVER", "#ff0000");
+                    return; // Stops the rest of the game from updating
+                }
 
+                if (isVictory) {
+                    displayEndScreen("VICTORY - GALAXY SAVED", "#00ff00");
+                    return; // Stops the rest of the game
+                }
+
+                // ... [Your existing movement, spawning, and boss logic goes here] ...
+
+                // 3. FINAL BOSS DEATH CHECK
+                if (thirdboss.health <= 0 && currentPhase === "Boss 3") {
+                    // We wait for the explosions to finish or trigger victory immediately
+                    setTimeout(() => {
+                        isVictory = true;
+                    }, 2000);
+
+                }
+                // --- Draw Scrolling Space Background ---
+
+                // ---------------------------------------
+                // star animations end
+                // main stuff
+                // --- Level and Boss Phase Controller ---
+                // LEVEL 1
+                if (score < 10 && currentPhase !== "Level 1") {
+                    currentPhase = "Level 1";
+                    triggerWarning("LEVEL 1: NEBULA ENTRY");
+                }
+                speedinc = 0.3
+                enemyspawning()
+                // BOSS 1
+                if (score >= 10 && firstboss.health > 0) {
+                    if (currentPhase !== "Boss 1") {
+                        currentPhase = "Boss 1";
+                        triggerWarning("WARNING: BOSS 1 DETECTED");
+                    }
+                    bossfight(firstboss);
+                }
+                // LEVEL 2
+                else if (score >= 50 && score < 81 && firstboss.health <= 0) {
+                    if (currentPhase !== "Level 2") {
+                        currentPhase = "Level 2";
+                        triggerWarning("LEVEL 2: ASTEROID BELT");
+                    }
+                    enemyspawning();
+                }
+                // BOSS 2
                 if (score >= 81 && secondboss.health > 0) {
-                    noscore = false;
+                    if (currentPhase !== "Boss 2") {
+                        currentPhase = "Boss 2";
+                        triggerWarning("WARNING: BOSS 2 DETECTED");
+                    }
                     bossfight(secondboss);
                 }
-                if (score <= 150 && secondboss.health <= 0 && firstboss.health <= 0) noscore = true; speedinc = 1.2; enemyspawning()
-
-                if (score >= 150 && thirdboss.health > 0) {
-                    noscore = false;
-                    bossfight(thirdboss)
-                    boss3fight()
+                // FINAL LEVEL (Level 3)
+                else if (score >= 100 && score < 150 && secondboss.health <= 0) {
+                    if (currentPhase !== "Level 3") {
+                        currentPhase = "Level 3";
+                        triggerWarning("FINAL LEVEL: THE VOID");
+                    }
+                    enemyspawning();
                 }
+                // FINAL BOSS (Boss 3)
+                if (score >= 150 && thirdboss.health > 0) {
+                    if (currentPhase !== "Boss 3") {
+                        currentPhase = "Boss 3";
+                        triggerWarning("WARNING: FINAL BOSS");
+                    }
+                    bossfight(thirdboss);
+                    boss3fight();
+                }
+
 
                 // main stuff
                 //  Collision logic start
@@ -554,6 +715,17 @@
                 // explosion function
                 // boss explosion function
                 function bossexplo() {
+                    if (thirdboss.active) {
+                        boss2enemies.forEach((enemy, enemyIndex) => {
+
+                            // ctx.clearRect(enemy.expos, enemy.eypos, 50, 50) // Clear the enemy from the canvas
+                            dropEnemyPrize(enemy, weights, prize, false)
+                            boss2enemies.splice(enemyIndex, 1)
+                            // boss1enemies = [];
+                            // console.log(prize)
+
+                        })
+                    }
                     boss1enemies.forEach((enemy, enemyIndex) => {
 
                         // ctx.clearRect(enemy.expos, enemy.eypos, 50, 50) // Clear the enemy from the canvas
@@ -563,6 +735,7 @@
                         // console.log(prize)
 
                     })
+
                 }
                 // boss explosion function
                 // prize logic end
@@ -821,15 +994,9 @@
                                 bullets.splice(bullindex, 1) // Remove the bullet that hit the enemy
                                 console.log(firepowercount)
                                 console.log(enemy.killcount)
-
-
                                 if (enemy.killcount <= 0) {
                                     bossexplo()
-
                                 }
-
-
-
                             }
 
                         })
@@ -961,7 +1128,91 @@
                     }
                     return
                 }
+                function displayEndScreen(message, color) {
+                    // Darken the background
+                    ctx.fillStyle = "rgba(0, 0, 0, 0.75)";
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+                    // Main Text
+                    ctx.fillStyle = color;
+                    ctx.font = "bold 70px 'Orbitron', sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.shadowBlur = 20;
+                    ctx.shadowColor = color;
+                    ctx.fillText(message, canvas.width / 2, canvas.height / 2);
+
+                    // Sub-text
+                    ctx.shadowBlur = 0;
+                    ctx.fillStyle = "white";
+                    ctx.font = "20px 'Orbitron', sans-serif";
+                    ctx.fillText("FINAL SCORE: " + score, canvas.width / 2, canvas.height / 2 + 60);
+                    ctx.fillText("PRESS F5 TO RESTART", canvas.width / 2, canvas.height / 2 + 100);
+
+                    ctx.textAlign = "start"; // Reset for future frames
+                }
+
+
+
+
+                function triggerWarning(text) {
+                    warningText = text;
+                    warningTimer = 120; // Show for 120 frames (approx 2 seconds)
+                    return
+                }
+                function drawStars() {
+                    ctx.fillStyle = "white";
+                    stars.forEach(star => {
+                        ctx.beginPath();
+                        ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+                        ctx.fill();
+                        star.y += star.speed;
+                        if (star.y > canvas.height) star.y = 0;
+                    });
+                }
+                function displayStartScreen() {
+                    // Semi-transparent overlay
+                    ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                    // Title
+                    ctx.fillStyle = "cyan";
+                    ctx.font = "bold 80px 'Orbitron', sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.shadowBlur = 15;
+                    ctx.shadowColor = "cyan";
+                    ctx.fillText("NEBULA STRIKE", canvas.width / 2, canvas.height / 2 - 50);
+
+                    // Prompt
+                    ctx.shadowBlur = 0;
+                    ctx.fillStyle = "white";
+                    ctx.font = "24px 'Orbitron', sans-serif";
+                    ctx.fillText("PRESS 'S' OR CLICK TO BEGIN MISSION", canvas.width / 2, canvas.height / 2 + 50);
+
+                    ctx.font = "14px 'Orbitron', sans-serif";
+                    ctx.fillStyle = "#888";
+                    ctx.fillText("ARROWS: MOVE | SPACE: FIRE | ENTER: ROCKETS", canvas.width / 2, canvas.height / 2 + 100);
+
+                    ctx.textAlign = "start"; // Reset for other game text
+
+
+                    // Start with Key Press
+                    window.addEventListener("keydown", function (e) {
+                        if (e.key.toLowerCase() === "s") {
+                            if (!isStarted) {
+                                isStarted = true;
+                                console.log("Game Started via Key");
+                            }
+                        }
+                    });
+
+                    // Start with Mouse Click
+                    canvas.addEventListener("mousedown", function () {
+                        if (!isStarted) {
+                            isStarted = true;
+                            console.log("Game Started via Click");
+                        }
+                    });
+                }
                 requestAnimationFrame(animate)
 
             }
