@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jet Test</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+
+<body
+    style="background: #222; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden;">
+
+    <canvas id="gameCanvas" width="1000" height="700" style="border:2px solid white; background: #000;"></canvas>
+
+    <script>
+        $(document).ready(function () {
+            const canvas = document.getElementById("gameCanvas");
+            const ctx = canvas.getContext("2d");
+            let pxpos = ((canvas.width) / 2) - 25, pypos = canvas.height - 100;
+            const playerspeed = 7;
+            let isinvincible = false;
+
+            // Efficient Image Loading
+            const images = {};
+            const assetNames = [
+                "jet", "ufo1", "ufo2", "ufo3", "ufo4", "ufo5", "ufo6", "ufo7", "ufo8", "ufo9", "ufo10", "ufo11", "ufo12",
+                "life", "bullet", "boss1", "boss2", "boss3", "ten1right", "ten1left", "ten2right", "ten2left",
+                "firepower", "meteor", "coin", "gear", "blast"
+            ];
+
+            assetNames.forEach(name => {
+                images[name] = new Image();
+                images[name].src = name + ".webp";
+            });
+
+            // Special names with spaces/brackets
+            const rocketNames = {
+                rocket: "rocket (leftcornerup).webp",
+                rocket1: "rocket (rightcornerup).webp",
+                rocket2: "rocket (rightcornerdown).webp",
+                rocket3: "rocket (leftcornerdown).webp"
+            };
+            Object.keys(rocketNames).forEach(key => {
+                images[key] = new Image();
+                images[key].src = rocketNames[key];
+            });
+
+            // Mapping for original variable names to stay compatible
+            const jetImg = images.jet, ufo1 = images.ufo1, ufo2 = images.ufo2, ufo3 = images.ufo3,
+                ufo4 = images.ufo4, ufo5 = images.ufo5, ufo6 = images.ufo6, ufo7 = images.ufo7,
+                ufo8 = images.ufo8, life = images.life, bullet = images.bullet, boss1 = images.boss1,
+                boss2 = images.boss2, boss3 = images.boss3, ten1right = images.ten1right,
+                ten1left = images.ten1left, blast = images.blast,
+                rocket = images.rocket, rocket1 = images.rocket1,
+                rocket2 = images.rocket2, rocket3 = images.rocket3;
+
+            let explosions = [];
+            let score = 0;
+            let lifecount = 3;
+            let bullets = [];
+            const bulletSpeed = 12;
+            let pushflag = true;
+            let noscore = true;
+
+            let enemies = [
+                { id: ufo1, expos: 400, eypos: 100, speed: 2 },
+                { id: ufo2, expos: 700, eypos: 200, speed: 1.5 },
+                { id: ufo3, expos: 100, eypos: 250, speed: 3 },
+                { id: ufo4, expos: 200, eypos: 350, speed: 4 },
+                { id: ufo5, expos: 300, eypos: 150, speed: 2.5 },
+                { id: ufo6, expos: 500, eypos: 300, speed: 1 }
+            ];
+
+            let firstboss = { img: boss1, x: 350, y: -250, active: false, speedX: 2, health: 100, w: 300, h: 200 };
+            let secondboss = { img: boss2, x: 350, y: -250, active: false, speedX: 2, health: 150, bullets: [], fireTimer: 0, w: 300, h: 200 };
+            let thirdboss = { img: boss3, x: 250, y: -350, active: false, speedX: 1.5, health: 300, w: 500, h: 300 };
+
+            let bossexplosions = [];
+            let ang1l = 0, ang2l = 0;
+            let keys = { ArrowRight: false, ArrowLeft: false, ArrowUp: false, ArrowDown: false, Spacebar: false };
+
+            $(window).on('keydown keyup', (e) => {
+                let key = e.key === ' ' ? 'Spacebar' : e.key;
+                if (keys.hasOwnProperty(key)) keys[key] = e.type === 'keydown';
+            });
+
+            function drawSprite(img, x, y, w, h, fallbackColor = "red") {
+                if (img.complete && img.naturalWidth !== 0) ctx.drawImage(img, x, y, w, h);
+                else {
+                    ctx.fillStyle = fallbackColor;
+                    ctx.fillRect(x, y, w, h);
+                }
+            }
+
+            function handlePlayerDamage() {
+                if (isinvincible) return;
+                lifecount--;
+                explosions.push({ blastxpos: pxpos, blastypos: pypos, timer: 40 });
+                isinvincible = true;
+                setTimeout(() => isinvincible = false, 2000);
+            }
+
+            function handleBossDeath(bossObj) {
+                for (let i = 0; i < 15; i++) {
+                    bossexplosions.push({
+                        blastxpos: bossObj.x + Math.random() * bossObj.w,
+                        blastypos: bossObj.y + Math.random() * bossObj.h,
+                        timer: 40 + (i * 3)
+                    });
+                }
+                bossObj.active = false;
+                bossObj.y = -2000;
+                score += 100;
+                noscore = true;
+            }
+
+            // Consolidated Tentacle Logic
+            function drawTentacle(image, x, y, width, height, angle, side) {
+                ctx.save();
+                ctx.translate(x, y);
+                ctx.rotate(angle);
+                let drawX = (side === 'left') ? -width : 0;
+                ctx.drawImage(image, drawX, -height / 2, width, height);
+                ctx.restore();
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                if (keys.ArrowLeft && pxpos > 0) pxpos -= playerspeed;
+                if (keys.ArrowRight && pxpos < canvas.width - 50) pxpos += playerspeed;
+                if (keys.ArrowUp && pypos > 0) pypos -= playerspeed;
+                if (keys.ArrowDown && pypos < canvas.height - 50) pypos += playerspeed;
+
+                // Player Rendering with Flicker when damaged
+                if (!isinvincible || Math.floor(Date.now() / 100) % 2 === 0) {
+                    drawSprite(jetImg, pxpos, pypos, 50, 50, "cyan");
+                }
+
+                // Score-based Difficulty & Rocket spawns
+                if (score > 20 && pushflag) {
+                    enemies.push({ id: ufo7, expos: 600, eypos: -50, speed: 3 }, { id: ufo8, expos: 200, eypos: -150, speed: 3.5 });
+                    enemies.push({ id: rocket, expos: 800, eypos: -300, speed: 6 }); // Fast Rocket
+                    pushflag = false;
+                }
+
+                if (!firstboss.active && !secondboss.active && !thirdboss.active) {
+                    enemies.forEach(enemy => {
+                        enemy.eypos += enemy.speed;
+                        if (enemy.eypos > canvas.height) { enemy.eypos = -50; enemy.expos = Math.random() * (canvas.width - 50); }
+                        drawSprite(enemy.id, enemy.expos, enemy.eypos, 50, 50, "red");
+
+                        if (!isinvincible && pxpos < enemy.expos + 40 && pxpos + 40 > enemy.expos && pypos < enemy.eypos + 40 && pypos + 40 > enemy.eypos) {
+                            handlePlayerDamage();
+                            enemy.eypos = -100;
+                        }
+                    });
+                }
+
+                if (score >= 30 && score < 70 && !firstboss.active && noscore) { firstboss.active = true; noscore = false; }
+                if (score >= 130 && score < 200 && !secondboss.active && noscore) { secondboss.active = true; noscore = false; }
+                if (score >= 300 && !thirdboss.active && noscore) { thirdboss.active = true; noscore = false; }
+
+                if (firstboss.active) boss1fight();
+                if (secondboss.active) boss2fight();
+                if (thirdboss.active) boss3fight();
+
+                if (keys.Spacebar) {
+                    bullets.push({ bxpos: pxpos + 20, bypos: pypos, speed: bulletSpeed });
+                    keys.Spacebar = false;
+                }
+
+                bullets.forEach((bull, index) => {
+                    bull.bypos -= bull.speed;
+                    drawSprite(bullet, bull.bxpos, bull.bypos, 10, 20, "yellow");
+                    if (bull.bypos < 0) bullets.splice(index, 1);
+                });
+
+                ctx.fillStyle = "white";
+                ctx.font = "bold 20px Arial";
+                ctx.fillText("SCORE: " + score, canvas.width - 150, 40);
+                for (let i = 0; i < lifecount; i++) drawSprite(life, 20 + (i * 35), 20, 30, 30, "lime");
+
+                // Explosion logic for both player hits and boss deaths
+                [explosions, bossexplosions].forEach(arr => {
+                    arr.forEach((ex, i) => {
+                        let size = (arr === explosions) ? 60 : 120;
+                        drawSprite(blast, ex.blastxpos - size / 4, ex.blastypos - size / 4, size, size, "orange");
+                        ex.timer--;
+                        if (ex.timer <= 0) arr.splice(i, 1);
+                    });
+                });
+
+                if (lifecount <= 0) {
+                    ctx.fillStyle = "rgba(0,0,0,0.8)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.fillStyle = "red"; ctx.font = "bold 60px Arial"; ctx.textAlign = "center";
+                    ctx.fillText("MISSION FAILED", canvas.width / 2, canvas.height / 2);
+                    return;
+                }
+                requestAnimationFrame(animate);
+            }
+
+            function checkBossHit(boss) {
+                bullets.forEach((bull, bi) => {
+                    if (bull.bxpos > boss.x && bull.bxpos < boss.x + boss.w && bull.bypos < boss.y + (boss.h * 0.8)) {
+                        boss.health--;
+                        bullets.splice(bi, 1);
+                        // Small impact explosion
+                        explosions.push({ blastxpos: bull.bxpos, blastypos: bull.bypos, timer: 10 });
+                        if (boss.health <= 0) handleBossDeath(boss);
+                    }
+                });
+            }
+
+            function boss1fight() {
+                if (firstboss.y < 50) firstboss.y += 1.5;
+                firstboss.x += firstboss.speedX;
+                if (firstboss.x > canvas.width - firstboss.w || firstboss.x < 0) firstboss.speedX *= -1;
+                drawSprite(firstboss.img, firstboss.x, firstboss.y, firstboss.w, firstboss.h, "purple");
+                checkBossHit(firstboss);
+                if (!isinvincible && pxpos < firstboss.x + firstboss.w && pxpos + 50 > firstboss.x && pypos < firstboss.y + firstboss.h && pypos + 50 > firstboss.y) {
+                    handlePlayerDamage();
+                }
+            }
+
+            function boss2fight() {
+                if (secondboss.y < 50) secondboss.y += 1.2;
+                secondboss.x += secondboss.speedX;
+                if (secondboss.x > canvas.width - secondboss.w || secondboss.x < 0) secondboss.speedX *= -1;
+                drawSprite(secondboss.img, secondboss.x, secondboss.y, secondboss.w, secondboss.h, "green");
+
+                if (++secondboss.fireTimer % 50 === 0) {
+                    for (let i = 0; i < 8; i++) {
+                        let angle = (i * (Math.PI / 4));
+                        secondboss.bullets.push({ x: secondboss.x + 150, y: secondboss.y + 100, vx: Math.cos(angle) * 5, vy: Math.sin(angle) * 5 });
+                    }
+                }
+                secondboss.bullets.forEach((b, i) => {
+                    b.x += b.vx; b.y += b.vy;
+                    ctx.fillStyle = "magenta"; ctx.beginPath(); ctx.arc(b.x, b.y, 8, 0, Math.PI * 2); ctx.fill();
+                    if (!isinvincible && b.x > pxpos && b.x < pxpos + 50 && b.y > pypos && b.y < pypos + 50) {
+                        handlePlayerDamage();
+                        secondboss.bullets.splice(i, 1);
+                    }
+                });
+                checkBossHit(secondboss);
+            }
+
+            function boss3fight() {
+                if (thirdboss.y < 30) thirdboss.y += 0.8;
+                thirdboss.x += thirdboss.speedX;
+                if (thirdboss.x > canvas.width - thirdboss.w || thirdboss.x < 0) thirdboss.speedX *= -1;
+
+                ang1l += 0.05; ang2l += 0.03;
+                drawTentacle(ten1left, thirdboss.x + 100, thirdboss.y + 150, 150, 400, Math.sin(ang1l) * 0.5, 'left');
+                drawTentacle(ten1right, thirdboss.x + 400, thirdboss.y + 150, 150, 400, Math.cos(ang2l) * 0.4, 'right');
+
+                drawSprite(thirdboss.img, thirdboss.x, thirdboss.y, thirdboss.w, thirdboss.h, "darkred");
+                checkBossHit(thirdboss);
+
+                if (!isinvincible) {
+                    if (pxpos + 50 > thirdboss.x && pxpos < thirdboss.x + 500 && pypos < thirdboss.y + 250 && pypos + 50 > thirdboss.y) {
+                        handlePlayerDamage();
+                    }
+                }
+            }
+            // copycode bossfight3
+            // function boss3fight1() {
+
+            //     firetimer = 0.1
+            //     thirdboss.active = true;
+
+            //     // Move boss into view
+            //     if (thirdboss.y < 50) thirdboss.y += 1;
+
+            //     // Boss Side-to-Side movement
+            //     thirdboss.x += thirdboss.speedX;
+            //     if (thirdboss.x > canvas.width - 300 || thirdboss.x < 0) thirdboss.speedX *= -1;
+
+
+
+            //     // --- DRAW BOSS HEAD ON TOP ---
+
+            //     // --- DRAW BOSS HEAD ON TOP ---
+            //     if (thirdboss.y >= 50) {
+            //         if (thirdboss.y >= 50) {
+            //             // 1. Increment a 'timer' variable (you can use 'ang' for this)
+            //             ang1l += 0.02
+            //             ang2l += 0.01
+            //             ang1r += 0.02
+            //             ang2r += 0.01
+
+            //             let sway1l = Math.sin(ang1l) * 60;
+            //             let sway2l = Math.sin(ang2l) * 60;
+            //             let sway1r = Math.sin(ang1r) * -60;
+            //             let sway2r = Math.sin(ang2r) * -60;
+            //             let radians1l = sway1l * Math.PI / 180;
+            //             let radians2l = sway2l * Math.PI / 180;
+            //             let radians1r = sway1r * Math.PI / 180;
+            //             let radians2r = sway2r * Math.PI / 180;
+
+
+            //             drawRotatedTentacleleft(ten1left, thirdboss.x + 280, thirdboss.y + 70, 600, 300, radians1l);
+            //             drawRotatedTentacleleft(ten2left, thirdboss.x + 280, thirdboss.y + 70, 600, 300, radians2l);
+            //             drawRotatedTentacleright(ten1right, thirdboss.x + 220, thirdboss.y + 70, 600, 300, radians1r);
+            //             drawRotatedTentacleright(ten2right, thirdboss.x + 220, thirdboss.y + 70, 600, 300, radians2r);
+
+            //             // ... rest of your code
+            //         }
+
+            //         boss3enemiesarr.forEach((enemy, enemyIndex) => {
+            //             let boss3flag = enemyweights[Math.floor(Math.random() * enemyweights.length)]
+            //             if (boss3flag == enemyIndex) {
+            //                 enemy.timer--
+            //                 if (enemy.timer <= 0) {
+            //                     enemy.eypos = thirdboss.y + 100
+            //                     enemy.expos = thirdboss.x + 125
+            //                     boss1enemies.push(enemy)
+            //                     enemy.timer = Math.floor(Math.random() * 300) + 30 * firetimer
+            //                 }
+
+            //             }
+            //         })
+            //         boss1enemies.forEach((enemy, enemyIndex) => {
+            //             if (enemy.eypos > canvas.height || enemy.killcount <= 0) {
+            //                 boss1enemies.splice(enemyIndex, 1)
+            //             }
+            //             // enemy.expos = firstboss.x + 125
+
+            //             enemy.eypos += enemy.speed; // Move the enemy downwards based on its speed
+            //             enemyimg = enemy.id;
+
+
+            //             ctx.drawImage(enemyimg, enemy.expos, enemy.eypos, 50, 50);
+            //         });
+            //     }
+            //     ctx.drawImage(thirdboss.img, thirdboss.x, thirdboss.y, 500, 300);
+
+            //     //  Collision logic start
+            //     boss1enemies.forEach((enemy, enemyIndex) => {
+            //         if (pxpos < enemy.expos + 50 &&
+            //             pxpos + 50 > enemy.expos &&
+            //             pypos < enemy.eypos + 50 &&
+            //             pypos + 50 > enemy.eypos) {
+            //             if (!isinvincible) {
+            //                 // Remove one life
+            //                 lifecount--
+            //                 explosions.push({ id: blast, blastxpos: enemy.expos, blastypos: enemy.eypos, speed: enemy.speed, timer: 30 })
+            //                 boss1enemies.splice(enemyIndex, 1)
+            //                 isinvincible = true; // Set invincibility to prevent multiple collisions in a short time
+            //                 setTimeout(() => {
+            //                     isinvincible = false; // Reset invincibility after 3 seconds
+            //                 }, 3000)
+            //             }
+
+            //         }
+
+            //     })
+
+            //     //collision logic 
+            //     // boss explosion logic start
+            //     bossexplosions.forEach((bossexplosion, bossexplosionindex) => {
+            //         ctx.drawImage(bossexplosion.id, bossexplosion.blastxpos, bossexplosion.blastypos, 100, 100)
+            //         bossexplosion.timer--
+            //         if (bossexplosion.timer <= 0) {
+            //             bossexplosions.splice(bossexplosionindex, 1)
+            //         }
+            //     })
+            //     // bossexplosion logic end
+
+            //     // enemy hit logic start
+            //     bullets.forEach((bull, bullindex) => {
+            //         if (bull.bxpos < secondboss.x + 300 &&
+            //             bull.bxpos + 25 > thirdboss.x &&
+            //             bull.bypos < thirdboss.y + 100 &&
+            //             bull.bypos + 25 > secondboss.y
+            //         ) {
+
+            //             bossexplosions.push({ id: blast, blastxpos: bull.bxpos, blastypos: bull.bypos, speed: 1, timer: 3 })
+            //             bullets.splice(bullindex, 1)
+            //             thirdboss.health = thirdboss.health - firepowercount - 1
+            //             console.log(thirdboss.health)
+            //         }
+            //         boss1enemies.forEach((enemy, enemyIndex) => {
+
+            //             //                 // let firstboss = {
+            //             //     img: boss1,
+            //             //     x: 400,
+            //             //     y: -200, // Start off-screen
+            //             //     active: false,
+            //             //     speedX: 2,
+            //             //     health: 50
+            //             // };
+            //             if (bull.bxpos < enemy.expos + 25 &&
+            //                 bull.bxpos + 25 > enemy.expos &&
+            //                 bull.bypos < enemy.eypos + 25 &&
+            //                 bull.bypos + 25 > enemy.eypos
+            //             ) {
+            //                 enemy.killcount = enemy.killcount - firepowercount - 1
+            //                 // bullets.splice(bullindex, 1) // Remove the bullet that hit the enemy
+            //                 console.log(firepowercount)
+            //                 console.log(enemy.killcount)
+
+
+            //                 if (enemy.killcount <= 0) {
+            //                     bossexplo()
+            //                     // deadenemy = enemy.id
+            //                     // blastflag = true
+            //                     // if (blastflag) {
+            //                     //     ctx.drawImage(blast, blastposx, blastposy, 50, 50) // Draw explosion at the enemy's position
+            //                     //     setTimeout(() => {
+            //                     //         blastflag = false
+            //                     //     }, 5000)
+
+            //                     // }
+            //                     // explosions.push({ id: blast, blastxpos: enemy.expos, blastypos: enemy.eypos, speed: enemy.speed, timer: 30 })
+
+
+            //                     // // ctx.clearRect(enemy.expos, enemy.eypos, 50, 50) // Clear the enemy from the canvas
+            //                     // let flag = weights[Math.floor(Math.random() * weights.length)]
+            //                     // if (flag == 1) {
+            //                     //     prize.push({ id: coin, lxpos: enemy.expos, lypos: enemy.eypos, lspeed: enemy.speed, type: "score" })
+            //                     // }
+            //                     // else if (flag == 4) {
+            //                     //     prize.push({ id: firepower, lxpos: enemy.expos, lypos: enemy.eypos, lspeed: enemy.speed, type: "firepower" })
+            //                     // }
+            //                     // else if (flag == 2) {
+            //                     //     prize.push({ id: gear, lxpos: enemy.expos, lypos: enemy.eypos, lspeed: enemy.speed, type: "gear" })
+            //                     // }
+            //                     // else if (flag == 3) {
+            //                     //     prize.push({ id: life, lxpos: enemy.expos, lypos: enemy.eypos, lspeed: enemy.speed, type: "life" })
+            //                     // }
+            //                     // // console.log(prize)
+            //                     // bullets.splice(bullindex, 1) // Remove the bullet that hit the enemy
+            //                     // score++
+
+            //                 }
+
+
+
+            //             }
+
+            //         })
+
+            //     });
+
+            // }
+            // copycodebissfight3end
+            // boss1gfight copy start
+            function boss1fight() {
+                firetimer = 1
+                firstboss.active = true;
+
+                // Move boss into view
+                if (firstboss.y < 50) firstboss.y += 1;
+                // let firstbossyposition = firstboss.y
+
+
+                // Boss Side-to-Side movement
+                firstboss.x += firstboss.speedX;
+                if (firstboss.x > canvas.width - 300 || firstboss.x < 0) firstboss.speedX *= -1;
+
+
+
+                // --- DRAW BOSS HEAD ON TOP ---
+                if (firstboss.y >= 50) {
+                    boss1enemiesarr.forEach((enemy, enemyIndex) => {
+                        let boss1flag = enemyweights[Math.floor(Math.random() * enemyweights.length)]
+                        if (boss1flag == enemyIndex) {
+                            enemy.timer--
+                            if (enemy.timer <= 0) {
+                                enemy.eypos = firstboss.y + 100
+                                enemy.expos = firstboss.x + 125
+                                boss1enemies.push(enemy)
+                                enemy.timer = Math.floor(Math.random() * 300) + 30 * firetimer
+                            }
+
+                        }
+                    })
+                    boss1enemies.forEach((enemy, enemyIndex) => {
+                        if (enemy.eypos > canvas.height || enemy.killcount <= 0) {
+                            boss1enemies.splice(enemyIndex, 1)
+                        }
+
+
+                        enemy.eypos += enemy.speed; // Move the enemy downwards based on its speed
+                        enemyimg = enemy.id;
+
+
+                        ctx.drawImage(enemyimg, enemy.expos, enemy.eypos, 50, 50);
+                    });
+                }
+                ctx.drawImage(firstboss.img, firstboss.x, firstboss.y, 300, 200);
+
+                //  Collision logic start
+                boss1enemies.forEach((enemy, enemyIndex) => {
+                    if (pxpos < enemy.expos + 50 &&
+                        pxpos + 50 > enemy.expos &&
+                        pypos < enemy.eypos + 50 &&
+                        pypos + 50 > enemy.eypos) {
+                        if (!isinvincible) {
+                            // Remove one life
+                            lifecount--
+                            explosions.push({ id: blast, blastxpos: enemy.expos, blastypos: enemy.eypos, speed: enemy.speed, timer: 30 })
+                            boss1enemies.splice(enemyIndex, 1)
+                            isinvincible = true; // Set invincibility to prevent multiple collisions in a short time
+                            setTimeout(() => {
+                                isinvincible = false; // Reset invincibility after 3 seconds
+                            }, 3000)
+                        }
+
+                    }
+
+                })
+
+                //collision logic 
+                // boss explosion logic start
+                bossexplosions.forEach((bossexplosion, bossexplosionindex) => {
+                    ctx.drawImage(bossexplosion.id, bossexplosion.blastxpos, bossexplosion.blastypos, 100, 100)
+                    bossexplosion.timer--
+                    if (bossexplosion.timer <= 0) {
+                        bossexplosions.splice(bossexplosionindex, 1)
+                    }
+                })
+                // bossexplosion logic end
+
+                // enemy hit logic start
+                bullets.forEach((bull, bullindex) => {
+                    if (bull.bxpos < firstboss.x + 300 &&
+                        bull.bxpos + 25 > firstboss.x &&
+                        bull.bypos < firstboss.y + 100 &&
+                        bull.bypos + 25 > firstboss.y
+                    ) {
+
+                        bossexplosions.push({ id: blast, blastxpos: bull.bxpos, blastypos: bull.bypos, speed: 1, timer: 3 })
+                        bullets.splice(bullindex, 1)
+                        firstboss.health = firstboss.health - firepowercount - 1
+                        console.log(firstboss.health)
+                        // TRIGGER DEATH ANIMATION
+                        if (firstboss.health <= 0) {
+                            handleBossDeath(firstboss);
+                        }
+                        return; // Important: Stop processing this bullet since it's gone
+                    }
+                    boss1enemies.forEach((enemy, enemyIndex) => {
+                        if (bull.bxpos < enemy.expos + 25 &&
+                            bull.bxpos + 25 > enemy.expos &&
+                            bull.bypos < enemy.eypos + 25 &&
+                            bull.bypos + 25 > enemy.eypos
+                        ) {
+                            enemy.killcount = enemy.killcount - firepowercount - 1
+                            bullets.splice(bullindex, 1) // Remove the bullet that hit the enemy
+                            console.log(firepowercount)
+                            console.log(enemy.killcount)
+
+
+                            if (enemy.killcount <= 0) {
+                                bossexplo()
+                            }
+                        }
+                    })
+                });
+
+                // enemy hit logic end
+            }
+            // boss1fightcopyend
+            // prize logic copy start
+            explosions.push({ id: blast, blastxpos: enemy.expos, blastypos: enemy.eypos, speed: enemy.speed, timer: 30 })
+
+
+            // ctx.clearRect(enemy.expos, enemy.eypos, 50, 50) // Clear the enemy from the canvas
+            let flag = weights[Math.floor(Math.random() * weights.length)]
+            if (flag == 1) {
+                prize.push({ id: coin, lxpos: enemy.expos, lypos: enemy.eypos, lspeed: enemy.speed, type: "score" })
+            }
+            else if (flag == 4) {
+                prize.push({ id: firepower, lxpos: enemy.expos, lypos: enemy.eypos, lspeed: enemy.speed, type: "firepower" })
+            }
+            else if (flag == 2) {
+                prize.push({ id: gear, lxpos: enemy.expos, lypos: enemy.eypos, lspeed: enemy.speed, type: "gear" })
+            }
+            else if (flag == 3) {
+                prize.push({ id: life, lxpos: enemy.expos, lypos: enemy.eypos, lspeed: enemy.speed, type: "life" })
+            }
+            // prize logic copy end
+
+            animate();
+        });
+    </script>
+</body>
+
+</html>
