@@ -19,73 +19,76 @@
             let pxpos = ((canvas.width) / 2) - 25, pypos = canvas.height - 100;
             const playerspeed = 10;
             let isinvincible = false;
-            let speedinc = 1;
+            let speedinc = 0.2
             // images objects
             const jetImg = new Image();
-            jetImg.src = "jet.png"
+            jetImg.src = "jet.webp"
             const ufo1 = new Image();
-            ufo1.src = "ufo1.png"
+            ufo1.src = "ufo1.webp"
             const ufo2 = new Image();
-            ufo2.src = "ufo2.png"
+            ufo2.src = "ufo2.webp"
             const ufo3 = new Image();
-            ufo3.src = "ufo3.png"
+            ufo3.src = "ufo3.webp"
             const ufo4 = new Image();
-            ufo4.src = "ufo4.png"
+            ufo4.src = "ufo4.webp"
             const ufo5 = new Image();
-            ufo5.src = "ufo5.png"
+            ufo5.src = "ufo5.webp"
             const ufo6 = new Image();
-            ufo6.src = "ufo6.png"
+            ufo6.src = "ufo6.webp"
             const ufo7 = new Image();
-            ufo7.src = "ufo7.png"
+            ufo7.src = "ufo7.webp"
             const ufo8 = new Image();
-            ufo8.src = "ufo8.png"
+            ufo8.src = "ufo8.webp"
             const ufo9 = new Image();
-            ufo9.src = "ufo9.png"
+            ufo9.src = "ufo9.webp"
             const ufo10 = new Image();
-            ufo10.src = "ufo10.png"
+            ufo10.src = "ufo10.webp"
             const ufo11 = new Image();
-            ufo11.src = "ufo11.png"
+            ufo11.src = "ufo11.webp"
             const ufo12 = new Image();
-            ufo12.src = "ufo12.png"
+            ufo12.src = "ufo12.webp"
             const life = new Image();
-            life.src = "life.png"
+            life.src = "life.webp"
             const bullet = new Image();
-            bullet.src = "bullet.png"
+            bullet.src = "bullet.webp"
             const boss1 = new Image();
-            boss1.src = "boss1.png"
+            boss1.src = "boss1.webp"
             const boss2 = new Image();
-            boss2.src = "boss2.png"
+            boss2.src = "boss2.webp"
             const boss3 = new Image();
-            boss3.src = "boss3.png"
-            const ten1 = new Image();
-            ten1.src = "ten1.png"
+            boss3.src = "boss3.webp"
+            const ten1right = new Image();
+            ten1right.src = "ten1right.webp"
+            const ten1left = new Image();
+            ten1left.src = "ten1left.webp"
+            const ten2right = new Image();
+            ten2right.src = "ten2right.webp"
+            const ten2left = new Image();
+            ten2left.src = "ten2left.webp"
             const firepower = new Image();
-            firepower.src = "firepower.png"
+            firepower.src = "firepower.webp"
             const rocket = new Image();
-            rocket.src = "rocket (leftcornerup).png"
+            rocket.src = "rocket (leftcornerup).webp"
             const rocket1 = new Image();
-            rocket1.src = "rocket (rightcornerup).png"
+            rocket1.src = "rocket (rightcornerup).webp"
             const rocket2 = new Image();
-            rocket2.src = "rocket (rightcornerdown).png"
+            rocket2.src = "rocket (rightcornerdown).webp"
             const rocket3 = new Image();
-            rocket3.src = "rocket (leftcornerdown).png"
-            const rocketl = new Image();
-            rocketl.src = "rocket1.png"
+            rocket3.src = "rocket (leftcornerdown).webp"
             const meteor = new Image();
-            meteor.src = "meteor.png"
+            meteor.src = "meteor.webp"
             const coin = new Image();
-            coin.src = "coin.png"
+            coin.src = "coin.webp"
             const gear = new Image();
-            gear.src = "gear.png"
+            gear.src = "gear.webp"
             const blast = new Image();
-            blast.src = "blast.png"
+            blast.src = "blast.webp"
             let inc = 0
             let rxpos
             let rypos
             let firedrockets = []
-
             let explosions = []
-
+            let bossenemyexplosions = []
             let lastrocketcount = 0
             let firerocket = []
             let rocketfireflag = false
@@ -94,7 +97,9 @@
                 weights.push(1)
 
             }
+            let bosslife
 
+            let noscore = true
             let prize = []
             let score = 0;
             let lifecount = 3; // Initial life count
@@ -107,20 +112,21 @@
             const bulletSpeed = 10;
             let blastflag = false
             // 1. Array to hold multiple enemies
-            pushflag = true
+            let pushflag = true
             let enemies = [
                 { id: ufo1, expos: 400, eypos: 100, speed: 2 * speedinc, killcount: 4 },
                 { id: ufo2, expos: 700, eypos: 200, speed: 1.5 * speedinc, killcount: 4 },
                 { id: ufo3, expos: 100, eypos: 250, speed: 3 * speedinc, killcount: 4 },
                 { id: ufo4, expos: 200, eypos: 350, speed: 4 * speedinc, killcount: 4 },
                 { id: ufo5, expos: 300, eypos: 150, speed: 2.5 * speedinc, killcount: 4 },
-                { id: ufo6, expos: 500, eypos: 300, speed: 1 * speedinc, killcount: 4 }
-                // { id: ufo7, expos: 600, eypos: 400, speed: 3.5 },
-                // { id: ufo8, expos: 800, eypos: 250, speed: 2.8 },
-                // { id: ufo9, expos: 900, eypos: 350, speed: 1.2 },
-                // { id: ufo10, expos: 150, eypos: 450, speed: 4.5 },
-                // { id: ufo11, expos: 250, eypos: 550, speed: 3.2 },
-                // { id: ufo12, expos: 350, eypos: 650, speed: 2.3 }
+                { id: ufo6, expos: 500, eypos: 300, speed: 1 * speedinc, killcount: 4 },
+                { id: ufo7, expos: 600, eypos: 700, speed: 3.5 * speedinc, killcount: 4 },
+                { id: ufo8, expos: 800, eypos: 900, speed: 2.8 * speedinc, killcount: 4 },
+                { id: ufo9, expos: 900, eypos: 950, speed: 1.2 * speedinc, killcount: 4 },
+                { id: ufo10, expos: 150, eypos: 850, speed: 4.5 * speedinc, killcount: 4 },
+                { id: ufo11, expos: 250, eypos: 750, speed: 3.2 * speedinc, killcount: 4 },
+                { id: ufo12, expos: 350, eypos: 650, speed: 2.3 * speedinc, killcount: 4 }
+
             ];
             let enemyweights = [1, 2, 3, 4, 5, 6]
             let firetimer = 1
@@ -133,25 +139,28 @@
                 y: -200, // Start off-screen
                 active: false,
                 speedX: 2,
-                health: 100
+                health: 30
             };
             let bossexplosions = []
             let boss1enemies = [];
-            let boss1enemiesarr = [
-                { id: ufo7, expos: firstboss.x, eypos: firstboss.y, speed: 3.5, timer: Math.floor(Math.random() * 300) + 30 * firetimer, killcount: 4 },
-                { id: ufo8, expos: firstboss.x, eypos: firstboss.y, speed: 2.8, timer: Math.floor(Math.random() * 300) + 30 * firetimer, killcount: 4 },
-                { id: ufo9, expos: firstboss.x, eypos: firstboss.y, speed: 1.2, timer: Math.floor(Math.random() * 300) + 30 * firetimer, killcount: 4 },
-                { id: ufo10, expos: firstboss.x, eypos: firstboss.y, speed: 4.5, timer: Math.floor(Math.random() * 300) + 30 * firetimer, killcount: 4 },
-                { id: ufo11, expos: firstboss.x, eypos: firstboss.y, speed: 3.2, timer: Math.floor(Math.random() * 300) + 30 * firetimer, killcount: 4 },
-                { id: ufo12, expos: firstboss.x, eypos: firstboss.y, speed: 2.3, timer: Math.floor(Math.random() * 300) + 30 * firetimer, killcount: 4 }];
+            let bossenemiesarr = [
+                { id: ufo1, expos: firstboss.x, eypos: firstboss.y, speed: 3.5, timer: Math.floor(Math.random() * 300) + 30 * firetimer, killcount: 4 },
+                { id: ufo2, expos: firstboss.x, eypos: firstboss.y, speed: 2.8, timer: Math.floor(Math.random() * 300) + 30 * firetimer, killcount: 4 },
+                { id: ufo3, expos: firstboss.x, eypos: firstboss.y, speed: 1.2, timer: Math.floor(Math.random() * 300) + 30 * firetimer, killcount: 4 },
+                { id: ufo4, expos: firstboss.x, eypos: firstboss.y, speed: 4.5, timer: Math.floor(Math.random() * 300) + 30 * firetimer, killcount: 4 },
+                { id: ufo5, expos: firstboss.x, eypos: firstboss.y, speed: 3.2, timer: Math.floor(Math.random() * 300) + 30 * firetimer, killcount: 4 },
+                { id: ufo6, expos: firstboss.x, eypos: firstboss.y, speed: 2.3, timer: Math.floor(Math.random() * 300) + 30 * firetimer, killcount: 4 }];
             let secondboss = {
                 img: boss2,
                 x: 400,
                 y: -200, // Start off-screen
                 active: false,
                 speedX: 2,
-                health: 50
+                health: 30,
+                bullets: [],
+                firetimer: 0
             };
+
 
             let thirdboss = {
                 img: boss3,
@@ -159,14 +168,29 @@
                 y: -200, // Start off-screen
                 active: false,
                 speedX: 2,
-                health: 50
+                health: 30
             };
+            let boss3enemiesarr = [
+                { id: ufo1, expos: thirdboss.x, eypos: thirdboss.y, speed: 3.5, timer: Math.floor(Math.random() * 300) + 30 * firetimer, killcount: 4 },
+                { id: ufo2, expos: thirdboss.x, eypos: thirdboss.y, speed: 2.8, timer: Math.floor(Math.random() * 300) + 30 * firetimer, killcount: 4 },
+                { id: ufo3, expos: thirdboss.x, eypos: thirdboss.y, speed: 1.2, timer: Math.floor(Math.random() * 300) + 30 * firetimer, killcount: 4 },
+                { id: ufo4, expos: thirdboss.x, eypos: thirdboss.y, speed: 4.5, timer: Math.floor(Math.random() * 300) + 30 * firetimer, killcount: 4 },
+                { id: ufo5, expos: thirdboss.x, eypos: thirdboss.y, speed: 3.2, timer: Math.floor(Math.random() * 300) + 30 * firetimer, killcount: 4 },
+                { id: ufo6, expos: thirdboss.x, eypos: thirdboss.y, speed: 2.3, timer: Math.floor(Math.random() * 300) + 30 * firetimer, killcount: 4 },
+                { id: ufo7, expos: thirdboss.x, eypos: thirdboss.y, speed: 3.5, timer: Math.floor(Math.random() * 300) + 30 * firetimer, killcount: 4 },
+                { id: ufo8, expos: thirdboss.x, eypos: thirdboss.y, speed: 2.8, timer: Math.floor(Math.random() * 300) + 30 * firetimer, killcount: 4 },
+                { id: ufo9, expos: thirdboss.x, eypos: thirdboss.y, speed: 1.2, timer: Math.floor(Math.random() * 300) + 30 * firetimer, killcount: 4 },
+                { id: ufo10, expos: thirdboss.x, eypos: thirdboss.y, speed: 4.5, timer: Math.floor(Math.random() * 300) + 30 * firetimer, killcount: 4 },
+                { id: ufo11, expos: thirdboss.x, eypos: thirdboss.y, speed: 3.2, timer: Math.floor(Math.random() * 300) + 30 * firetimer, killcount: 4 },
+                { id: ufo12, expos: thirdboss.x, eypos: thirdboss.y, speed: 2.3, timer: Math.floor(Math.random() * 300) + 30 * firetimer, killcount: 4 }
+            ]
+            let ang1l = 0
+            let ang2l = 0
+            let ang1r = 0
+            let ang2r = 0
 
             // boss
 
-            enemies.forEach(enemy => {
-                enemy.expos = Math.random() * (canvas.width - 50); // Random x position within canvas width
-            })
 
             let keys = {
                 ArrowRight: false,
@@ -220,26 +244,41 @@
                 }
                 // player animations end
 
+                // main stuff
 
 
-                // enemy animation start
-                if (!firstboss.active) {
+                // Change your calls in the animate function to this:
+                if (score <= 10) speedinc = 0.2; enemyspawning()
+                if (score >= 10 && firstboss.health > 0) {
+                    noscore = false
+                    bossfight(firstboss);
 
-                    enemies.forEach(enemy => {
-
-                        enemy.eypos += enemy.speed; // Move the enemy downwards based on its speed
-                        enemyimg = enemy.id;
-                        if (enemy.eypos > canvas.height) {
-                            enemy.eypos = -50;
-
-                            enemy.expos = Math.random() * (canvas.width - 50);
-
-                        }
-
-                        ctx.drawImage(enemyimg, enemy.expos, enemy.eypos, 50, 50);
-                    });
                 }
-                // enemy animation end 
+
+                if (score <= 81 && firstboss.health <= 0) noscore = true; speedinc = 0.4; enemyspawning()
+
+                if (score >= 81 && secondboss.health > 0) {
+                    noscore = false;
+                    bossfight(secondboss);
+                }
+                if (score <= 150 && secondboss.health <= 0 && firstboss.health <= 0) noscore = true; speedinc = 1.2; enemyspawning()
+
+                if (score >= 150 && thirdboss.health > 0) {
+                    noscore = false;
+                    boss3fight()
+                }
+
+                // if (firstboss.health <= 0 && pushflag) {
+                //     enemies.push(
+                //     )
+                //     pushflag = false
+                // }
+
+
+                // if (score >= 60 && boss3fightflag) boss3fight()
+                // main stuff
+
+
 
 
 
@@ -274,18 +313,12 @@
                 ctx.font = "20px Arial"
                 ctx.fillText("Score: " + score, canvas.width - 100, canvas.height - 20)
 
-                if (score > 1 && pushflag == true && !firstboss.active) {
-                    enemies.push(
-                        { id: ufo7, expos: 600, eypos: 700, speed: 3.5 * speedinc, killcount: 4 },
-                        { id: ufo8, expos: 800, eypos: 900, speed: 2.8 * speedinc, killcount: 4 },
-                        { id: ufo9, expos: 900, eypos: 950, speed: 1.2 * speedinc, killcount: 4 },
-                        { id: ufo10, expos: 150, eypos: 850, speed: 4.5 * speedinc, killcount: 4 },
-                        { id: ufo11, expos: 250, eypos: 750, speed: 3.2 * speedinc, killcount: 4 },
-                        { id: ufo12, expos: 350, eypos: 650, speed: 2.3 * speedinc, killcount: 4 })
-                    pushflag = false
 
-                }
 
+
+
+
+                // if (firstboss.active || secondboss.active || thirdboss.active) noscore = false
                 //  score logic end
 
 
@@ -318,7 +351,20 @@
                 //     console.log(firerocket)
 
                 // }
+                // boss explosion logic start
+                bossexplosions.forEach((bossexplosion, bossexplosionindex) => {
+                    ctx.drawImage(bossexplosion.id, bossexplosion.blastxpos, bossexplosion.blastypos, 100, 100)
+                    bossexplosion.timer--
+                    if (bossexplosion.timer <= 0) {
+                        bossexplosions.splice(bossexplosionindex, 1)
+                    }
+                })
+                // bossexplosion logic end
                 //  rocket fire logic start
+                if (firstboss.active) bosslife = firstboss
+                if (secondboss.active) bosslife = secondboss
+                if (thirdboss.active) bosslife = thirdboss
+
                 function resettimer() {
                     rocketfireflag = false
                     inc = 0
@@ -330,27 +376,24 @@
                     // rockettimer = setTimeout(() => {
                     //     resettimer()
                     // }, 10000)
-
                 }
                 if (rocketfireflag) {
-
                     inc = 3 + inc
                     if (rxpos > canvas.width / 2 && rypos < canvas.height / 2) {
                         ctx.drawImage(rocket2, rxpos - inc, rypos + inc, 100, 100)
                         if (rxpos - inc < canvas.width / 2 && rypos + inc > canvas.height / 2) {
                             firedrockets.push({ id: blast, rbxpos: rxpos - inc, rbypos: rypos + inc, timer: 30 })
-                            explo()
+                            if (firstboss.active || secondboss.active || thirdboss.active) { bossexplo(); rocketbosshealthdecrement(bosslife) }
+                            else explo()
                             resettimer()
-
-
-
                         }
                     }
                     else if (rxpos > canvas.width / 2 && rypos > canvas.height / 2) {
                         ctx.drawImage(rocket1, rxpos - inc, rypos - inc, 100, 100)
                         if (rxpos - inc < canvas.width / 2 && rypos - inc < canvas.height / 2) {
                             firedrockets.push({ id: blast, rbxpos: rxpos - inc, rbypos: rypos - inc, timer: 30 })
-                            explo()
+                            if (firstboss.active || secondboss.active || thirdboss.active) { bossexplo(); rocketbosshealthdecrement(bosslife) }
+                            else explo()
                             resettimer()
 
                         }
@@ -359,52 +402,33 @@
                         ctx.drawImage(rocket, rxpos + inc, rypos - inc, 100, 100)
                         if (rxpos + inc > canvas.width / 2 && rypos - inc < canvas.height / 2) {
                             firedrockets.push({ id: blast, rbxpos: rxpos + inc, rbypos: rypos - inc, timer: 30 })
-                            explo()
+                            if (firstboss.active || secondboss.active || thirdboss.active) { bossexplo(); rocketbosshealthdecrement(bosslife) }
+                            else explo()
                             resettimer()
-
                         }
-
                     }
                     else if (rxpos < canvas.width / 2 && rypos < canvas.height / 2) {
                         ctx.drawImage(rocket3, rxpos + inc, rypos + inc, 100, 100)
                         if (rxpos + inc > canvas.width / 2 && rypos + inc > canvas.height / 2) {
                             firedrockets.push({ id: blast, rbxpos: rxpos + inc, rbypos: rypos + inc, timer: 30 })
-                            explo()
+                            if (firstboss.active || secondboss.active || thirdboss.active) { bossexplo(); rocketbosshealthdecrement(bosslife) }
+                            else explo()
                             resettimer()
-
                         }
                     }
-
                     // ctx.drawImage(rocket3, rxpos + inc, rypos - inc, 100, 100)
                 }
-
-
-
-
                 // rocketcount--    
                 // lastrocketcount = rocketcount
-
-
-
-
-
-
                 // rocket fire logic end
                 // rocket hit logic start
-
-
                 firedrockets.forEach((firedrocket, firedrocketindex) => {
                     ctx.drawImage(firedrocket.id, firedrocket.rbxpos, firedrocket.rbypos, 200, 200)
                     firedrocket.timer--
                     if (firedrocket.timer <= 0) {
                         firedrockets.splice(firedrocketindex, 1)
                         // ctx.clearRect(firedrocket.rbxpos, firedrocket.rbypos, 200, 200)
-
-
-
                     }
-
-
                 })
                 // rocket hit logic end
 
@@ -418,8 +442,6 @@
                     bullets.push(bulletobject);
 
                 }
-
-
                 if (keys.Spacebar) { // Spacebar to fire
                     fireBullet();
                     keys.Spacebar = false;
@@ -429,12 +451,8 @@
                     ctx.drawImage(bull.id, bull.bxpos + 20, bull.bypos, 10, 20); // Draw the bullet immediately when fired
                     if (bull.bypos < 0)
                         bullets.shift()
-
                 });
-
-                // fire logic end
-
-
+                // fire logic 
                 // enemy hit logic start
                 bullets.forEach((bull, bullindex) => {
                     enemies.forEach((enemy, enemyIndex) => {
@@ -447,51 +465,17 @@
                             bullets.splice(bullindex, 1) // Remove the bullet that hit the enemy
                             console.log(firepowercount)
                             console.log(enemy.killcount)
-
-
                             if (enemy.killcount <= 0) {
-                                // deadenemy = enemy.id
-                                // blastflag = true
-                                // if (blastflag) {
-                                //     ctx.drawImage(blast, blastposx, blastposy, 50, 50) // Draw explosion at the enemy's position
-                                //     setTimeout(() => {
-                                //         blastflag = false
-                                //     }, 5000)
 
-                                // }
-                                explosions.push({ id: blast, blastxpos: enemy.expos, blastypos: enemy.eypos, speed: enemy.speed, timer: 30 })
-
-
-                                // ctx.clearRect(enemy.expos, enemy.eypos, 50, 50) // Clear the enemy from the canvas
-                                let flag = weights[Math.floor(Math.random() * weights.length)]
-                                if (flag == 1) {
-                                    prize.push({ id: coin, lxpos: enemy.expos, lypos: enemy.eypos, lspeed: enemy.speed, type: "score" })
-                                }
-                                else if (flag == 4) {
-                                    prize.push({ id: firepower, lxpos: enemy.expos, lypos: enemy.eypos, lspeed: enemy.speed, type: "firepower" })
-                                }
-                                else if (flag == 2) {
-                                    prize.push({ id: gear, lxpos: enemy.expos, lypos: enemy.eypos, lspeed: enemy.speed, type: "gear" })
-                                }
-                                else if (flag == 3) {
-                                    prize.push({ id: life, lxpos: enemy.expos, lypos: enemy.eypos, lspeed: enemy.speed, type: "life" })
-                                }
-
-                                // console.log(prize)
-
+                                dropEnemyPrize(enemy, weights, prize)
 
                                 enemy.eypos = -enemy.eypos - 10
                                 enemy.killcount = 4
                                 enemy.expos = Math.random() * (canvas.width - 50); // Respawn the enemy at a new random position
                                 bullets.splice(bullindex, 1) // Remove the bullet that hit the enemy
-                                score++
-
+                                if (noscore) score++
                             }
-
-
-
                         }
-
                     })
 
                 });
@@ -507,9 +491,6 @@
                     }
                 })
 
-
-
-
                 // explosion draw logic end
 
                 // prize logic start
@@ -517,6 +498,8 @@
                 prize.forEach((prizeitem, prizeindex) => {
                     ctx.drawImage(prizeitem.id, prizeitem.lxpos, prizeitem.lypos, 30, 30)
                     prizeitem.lypos += prizeitem.lspeed;
+                    if (prizeitem.lypos > canvas.height) prize.splice(prizeindex, 1);
+
 
                     if (prizeitem.lxpos < pxpos + 50 &&
                         prizeitem.lxpos + 50 > pxpos &&
@@ -530,79 +513,413 @@
 
                         }
                         else if (prizeitem.type == "score") {
-                            score += 10
+                            if (noscore) score++
                         }
                         else if (prizeitem.type == "gear") {
                             rocketcountinc++
                         }
                         prize.splice(prizeindex, 1)
                     }
+
                 })
-                // test
+                // enemy animation start
+                function enemyspawning() {
+                    if (!firstboss.active && !secondboss.active && !thirdboss.active) {
+                        //    enemies.forEach(enemy => {
+                        //             enemy.expos = Math.random() * (canvas.width - 50); // Random x position within canvas width
+                        //         })
+
+                        enemies.forEach(enemy => {
+
+                            enemy.eypos += enemy.speed; // Move the enemy downwards based on its speed
+                            enemyimg = enemy.id;
+                            if (enemy.eypos > canvas.height) {
+                                enemy.eypos = -50;
+
+                                enemy.expos = Math.random() * (canvas.width - 50);
+
+                            }
+
+                            ctx.drawImage(enemyimg, enemy.expos, enemy.eypos, 50, 50);
+                        });
+                    }
+                }
+                // enemy animation end 
+                // explosion function
                 function explo() {
                     enemies.forEach(enemy => {
-                        explosions.push({ id: blast, blastxpos: enemy.expos, blastypos: enemy.eypos, speed: enemy.speed, timer: 30 })
                         // ctx.clearRect(enemy.expos, enemy.eypos, 50, 50) // Clear the enemy from the canvas
-                        let flag = weights[Math.floor(Math.random() * weights.length)]
-                        if (flag == 1) {
-                            prize.push({ id: coin, lxpos: enemy.expos, lypos: enemy.eypos, lspeed: enemy.speed, type: "score" })
-                        }
-                        else if (flag == 4) {
-                            prize.push({ id: firepower, lxpos: enemy.expos, lypos: enemy.eypos, lspeed: enemy.speed, type: "firepower" })
-                        }
-                        else if (flag == 2) {
-                            prize.push({ id: gear, lxpos: enemy.expos, lypos: enemy.eypos, lspeed: enemy.speed, type: "gear" })
-                        }
-                        else if (flag == 3) {
-                            prize.push({ id: life, lxpos: enemy.expos, lypos: enemy.eypos, lspeed: enemy.speed, type: "life" })
-                        }
+                        dropEnemyPrize(enemy, weights, prize, true)
 
                         // console.log(prize)
-
-                        enemy.eypos = -enemy.eypos - 10
-                        enemy.killcount = 4
-                        enemy.expos = Math.random() * (canvas.width - 50); // Respawn the enemy at a new random position
-                        score++
-
-
-
-
-
 
 
                     })
                 }
-                // test
+                // explosion function
+                // boss explosion function
+                function bossexplo() {
+                    boss1enemies.forEach((enemy, enemyIndex) => {
+
+                        // ctx.clearRect(enemy.expos, enemy.eypos, 50, 50) // Clear the enemy from the canvas
+                        dropEnemyPrize(enemy, weights, prize, false)
+                        boss1enemies.splice(enemyIndex, 1)
+                        // boss1enemies = [];
+                        // console.log(prize)
+
+                    })
+                }
+                // boss explosion function
 
                 // prize logic end
-                // boss 1 logic start
-                if (score >= 5) boss1fight()
-                if (score >= 100) boss2fight()
-                if (score >= 160) boss3fight()
-                function boss1fight() {
+                // boss dead logic start
+                function handleBossDeath(bossObj) {
+                    if (!bossObj.active) return; // EXIT IMMEDIATELY if already dead
+                    // 1. Create multiple random explosions over the boss area
+                    bossObj.active = false;
+                    let deathx = bossObj.x
+                    let deathy = bossObj.y
+                    for (let i = 0; i < 5; i++) {
+                        bossexplosions.push({
+                            id: blast,
+                            blastxpos: deathx + Math.random() * 250, // spread across boss width
+                            blastypos: deathy + Math.random() * 150, // spread across boss height
+                            speed: 0,
+                            timer: 40 + (i * 10) // staggered timing
+                        });
+                    }
 
-                    firstboss.active = true;
+
+                    bossObj.y = -500; // Move it far off-screen
+
+                    // 3. Clear the minions currently on screen
+                    boss1enemies.length = 0;
+
+                    // 4. Bonus for winning
+                    score += 50;
+                    console.log("bossdead")
+                    // 2. Clear the boss and reset for the next phase
+
+
+                }
+                // boss death logic end
+
+                function boss3fight() {
+                    firetimer = 0.1;
+                    thirdboss.active = true;
+
+                    // 1. Move boss into view
+                    if (thirdboss.y < 50) thirdboss.y += 1;
+
+                    // 2. Boss Side-to-Side movement
+                    thirdboss.x += thirdboss.speedX;
+                    if (thirdboss.x > canvas.width - 500 || thirdboss.x < 0) thirdboss.speedX *= -1;
+
+                    // 3. Tentacle Animation & Collision Logic
+                    if (thirdboss.y >= 50) {
+                        ang1l += 0.02;
+                        ang2l += 0.01;
+                        ang1r += 0.02;
+                        ang2r += 0.01;
+
+                        let radians1l = (Math.sin(ang1l) * 60) * Math.PI / 180;
+                        let radians2l = (Math.sin(ang2l) * 60) * Math.PI / 180;
+                        let radians1r = (Math.sin(ang1r) * -60) * Math.PI / 180;
+                        let radians2r = (Math.sin(ang2r) * -60) * Math.PI / 180;
+
+                        // Draw Tentacles
+                        drawRotatedTentacleleft(ten1left, thirdboss.x + 280, thirdboss.y + 70, 600, 300, radians1l);
+                        drawRotatedTentacleleft(ten2left, thirdboss.x + 280, thirdboss.y + 70, 600, 300, radians2l);
+                        drawRotatedTentacleright(ten1right, thirdboss.x + 220, thirdboss.y + 70, 600, 300, radians1r);
+                        drawRotatedTentacleright(ten2right, thirdboss.x + 220, thirdboss.y + 70, 600, 300, radians2r);
+
+                        // --- TENTACLE VS PLAYER DAMAGE ---
+                        [radians1l, radians2l, radians1r, radians2r].forEach((rad, index) => {
+                            let tentacleLen = 250;
+                            let tipX = (index < 2 ? thirdboss.x + 280 : thirdboss.x + 220) + Math.sin(rad) * tentacleLen;
+                            let tipY = (thirdboss.y + 70) + Math.cos(rad) * tentacleLen;
+
+                            let dx = (pxpos + 25) - tipX;
+                            let dy = (pypos + 25) - tipY;
+                            let distance = Math.sqrt(dx * dx + dy * dy);
+
+                            if (distance < 60 && !isinvincible) {
+                                lifecount--;
+                                isinvincible = true;
+                                explosions.push({ id: blast, blastxpos: pxpos, blastypos: pypos, speed: 0, timer: 30 });
+                                setTimeout(() => { isinvincible = false; }, 3000);
+                            }
+                        });
+
+                        // Spawn Enemies
+                        boss3enemiesarr.forEach((enemy, enemyIndex) => {
+                            let boss3flag = enemyweights[Math.floor(Math.random() * enemyweights.length)];
+                            if (boss3flag == enemyIndex) {
+                                enemy.timer--;
+                                if (enemy.timer <= 0) {
+                                    enemy.eypos = thirdboss.y + 100;
+                                    enemy.expos = thirdboss.x + 225; // Centered
+                                    boss1enemies.push(enemy);
+                                    enemy.timer = Math.floor(Math.random() * 300) + 30 * firetimer;
+                                }
+                            }
+                        });
+
+                        // Update, Draw, and Handle Collision for Spawned Enemies
+                        boss1enemies.forEach((enemy, enemyIndex) => {
+                            if (enemy.eypos > canvas.height || enemy.killcount <= 0) {
+                                // If killed, handle drops or score here if needed
+                                if (enemy.killcount <= 0) {
+                                    dropEnemyPrize(enemy, weights, prize)
+                                    score++;
+                                }
+                                boss1enemies.splice(enemyIndex, 1);
+                            } else {
+                                enemy.eypos += enemy.speed;
+                                ctx.drawImage(enemy.id, enemy.expos, enemy.eypos, 50, 50);
+
+                                // --- ENEMY VS PLAYER COLLISION ---
+                                if (pxpos < enemy.expos + 50 &&
+                                    pxpos + 50 > enemy.expos &&
+                                    pypos < enemy.eypos + 50 &&
+                                    pypos + 50 > enemy.eypos) {
+
+                                    if (!isinvincible) {
+                                        lifecount--;
+                                        isinvincible = true;
+                                        explosions.push({ id: blast, blastxpos: enemy.expos, blastypos: enemy.eypos, speed: enemy.speed, timer: 30 });
+                                        boss1enemies.splice(enemyIndex, 1);
+                                        setTimeout(() => {
+                                            isinvincible = false;
+                                        }, 3000);
+                                    }
+                                }
+                            }
+                        });
+                    }
+
+                    // Draw Main Boss Body
+                    ctx.drawImage(thirdboss.img, thirdboss.x, thirdboss.y, 500, 300);
+
+                    // --- DAMAGE LOGIC: BULLETS VS BOSS, TENTACLES & ENEMIES ---
+                    bullets.forEach((bull, bullindex) => {
+                        let hit = false;
+
+                        // 1. Check Hit on Spawned Enemies (Minions)
+                        boss1enemies.forEach((enemy) => {
+                            if (!hit &&
+                                bull.bxpos < enemy.expos + 50 &&
+                                bull.bxpos + 25 > enemy.expos &&
+                                bull.bypos < enemy.eypos + 50 &&
+                                bull.bypos + 25 > enemy.eypos) {
+
+                                enemy.killcount -= (firepowercount + 1);
+                                hit = true;
+                            }
+                        });
+
+                        // 2. Check Hit on Main Body
+                        if (!hit &&
+                            bull.bxpos < thirdboss.x + 400 &&
+                            bull.bxpos + 25 > thirdboss.x + 100 &&
+                            bull.bypos < thirdboss.y + 250 &&
+                            bull.bypos + 25 > thirdboss.y) {
+
+                            thirdboss.health -= (firepowercount + 1);
+
+                            hit = true;
+                        }
+
+                        // 3. Check Hit on Tentacles
+                        if (!hit) {
+                            let tentacleRads = [
+                                (Math.sin(ang1l) * 60) * Math.PI / 180,
+                                (Math.sin(ang2l) * 60) * Math.PI / 180,
+                                (Math.sin(ang1r) * -60) * Math.PI / 180,
+                                (Math.sin(ang2r) * -60) * Math.PI / 180
+                            ];
+
+                            tentacleRads.forEach(rad => {
+                                let tentacleLen = 150;
+                                let midX = (rad > 0 ? thirdboss.x + 280 : thirdboss.x + 220) + Math.sin(rad) * tentacleLen;
+                                let midY = thirdboss.y + 70 + Math.cos(rad) * tentacleLen;
+
+                                let tdx = bull.bxpos - midX;
+                                let tdy = bull.bypos - midY;
+                                if (Math.sqrt(tdx * tdx + tdy * tdy) < 50) {
+                                    thirdboss.health -= (firepowercount + 1) * 0.5;
+                                    hit = true;
+                                }
+                            });
+                        }
+
+                        if (hit) {
+                            // bossexplosions.push({ id: blast, blastxpos: bull.bxpos, blastypos: bull.bypos, speed: 1, timer: 3 });
+                            bullets.splice(bullindex, 1);
+                        }
+                        // TRIGGER DEATH ANIMATION
+                        if (firstboss.health <= 0) {
+                            handleBossDeath(firstboss);
+                        }
+                        return; // Important: Stop processing this bullet since it's gone
+                    });
+
+                    // Draw explosions
+                    bossexplosions.forEach((expo, i) => {
+                        ctx.drawImage(expo.id, expo.blastxpos, expo.blastypos, 100, 100);
+                        expo.timer--;
+                        if (expo.timer <= 0) bossexplosions.splice(i, 1);
+                    });
+                }
+
+                // secondbossbullet fire logic start
+                function fireSemiCircle(boss) {
+                    // 1. Setup timing (only fire every 90 frames, about 1.5 seconds)
+                    if (!boss.fireTimer) boss.fireTimer = 0;
+                    boss.fireTimer++;
+
+                    if (boss.fireTimer % 90 === 0) {
+                        const numBullets = 7; // Number of bullets in the arc
+                        const spread = Math.PI; // 180 degrees spread
+
+                        for (let i = 0; i < numBullets; i++) {
+                            // Calculate angle for each bullet: 
+                            // 0 is right, Math.PI/2 is down, Math.PI is left
+                            let angle = (i * (spread / (numBullets - 1)));
+
+                            secondboss.bullets.push({
+                                x: boss.x + 150, // Center of the 300px wide boss
+                                y: boss.y + 150,
+                                vx: Math.cos(angle) * 4, // Horizontal velocity
+                                vy: Math.sin(angle) * 4, // Vertical velocity
+                                size: 10
+                            });
+                        }
+
+                    }
+
+                    // 2. Update and Draw those bullets
+                    secondboss.bullets.forEach((b, index) => {
+                        b.x += b.vx;
+                        b.y += b.vy;
+
+                        // Draw bullet
+                        ctx.fillStyle = "#FF00FF"; // Neon purple/pink for Boss 2
+                        ctx.beginPath();
+                        ctx.arc(b.x, b.y, b.size, 0, Math.PI * 2);
+                        ctx.fill();
+
+                        // 3. Collision with Player (using your player variables)
+                        if (b.x < pxpos + 50 && b.x + b.size > pxpos &&
+                            b.y < pypos + 50 && b.y + b.size > pypos) {
+                            if (!isinvincible) {
+                                bossexplosions.push({ id: blast, blastxpos: pxpos - 20, blastypos: pypos - 30, speed: 1, timer: 30 })
+                                lifecount--;
+                                isinvincible = true;
+                                setTimeout(() => { isinvincible = false; }, 3000);
+                                secondboss.bullets.splice(index, 1);
+                            }
+                        }
+
+                        // 4. Remove bullets that leave the screen to prevent lag
+                        if (b.y > canvas.height || b.x < 0 || b.x > canvas.width) {
+                            secondboss.bullets.splice(index, 1);
+                        }
+
+                        return
+
+                    });
+
+                }
+                // second boss bullet fire logic end
+                // boss1 logic end
+
+                // boss logic start
+                function drawRotatedTentacleleft(image, x, y, width, height, angle, flip = false) {
+                    ctx.save();
+                    ctx.translate(x, y); // This is the "Shoulder" where it attaches
+                    ctx.rotate(angle);
+                    if (flip) {
+                        ctx.scale(-1, 1); // Flips the tentacle horizontally
+                    }
+
+                    // Draw at 0 for Y so the TOP of the image stays at the (x,y) point
+                    ctx.drawImage(image, -width, -height / 2, width, height);
+
+                    ctx.restore();
+                }
+                function drawRotatedTentacleright(image, x, y, width, height, angle, flip = false) {
+                    ctx.save();
+                    ctx.translate(x, y); // This is the "Shoulder" where it attaches
+                    ctx.rotate(angle);
+                    if (flip) {
+                        ctx.scale(-1, 1); // Flips the tentacle horizontally
+                    }
+
+                    // Draw at 0 for Y so the TOP of the image stays at the (x,y) point
+                    ctx.drawImage(image, 0, -height / 2, width, height);
+
+                    ctx.restore();
+                }
+                // boss logic end
+                // prize function
+                function dropEnemyPrize(enemy, weights, prizeList, pflag) {
+                    explosions.push({ id: blast, blastxpos: enemy.expos, blastypos: enemy.eypos, speed: enemy.speed, timer: 30 })
+
+
+
+                    if (noscore) score++
+                    let flag = weights[Math.floor(Math.random() * weights.length)];
+
+                    // Shared properties to avoid repeating "enemy.expos" everywhere
+                    const dropData = {
+                        lxpos: enemy.expos,
+                        lypos: enemy.eypos,
+                        lspeed: enemy.speed
+                    };
+
+                    if (flag == 1) {
+                        prizeList.push({ id: coin, type: "score", ...dropData });
+                    }
+                    else if (flag == 4) {
+                        prizeList.push({ id: firepower, type: "firepower", ...dropData });
+                    }
+                    else if (flag == 2) {
+                        prizeList.push({ id: gear, type: "gear", ...dropData });
+                    }
+                    else if (flag == 3) {
+                        prizeList.push({ id: life, type: "life", ...dropData });
+                    }
+                    // prize function end
+                    if (pflag) {
+                        enemy.eypos = -enemy.eypos - 10
+                        enemy.expos = Math.random() * (canvas.width - 50); // Respawn the enemy at a new random position
+
+                    }
+                    enemy.killcount = 4
+                }
+                function bossfight(boss) {
+                    firetimer = 0.5
+                    if (secondboss.active) {
+                        fireSemiCircle(boss)
+                    }
+
+                    boss.active = true;
 
                     // Move boss into view
-                    if (firstboss.y < 50) firstboss.y += 1;
-                    // let firstbossyposition = firstboss.y
-
+                    if (boss.y < 50) boss.y += 1;
 
                     // Boss Side-to-Side movement
-                    firstboss.x += firstboss.speedX;
-                    if (firstboss.x > canvas.width - 300 || firstboss.x < 0) firstboss.speedX *= -1;
-
-
-
-                    // --- DRAW BOSS HEAD ON TOP ---
-                    if (firstboss.y >= 50) {
-                        boss1enemiesarr.forEach((enemy, enemyIndex) => {
-                            let boss1flag = enemyweights[Math.floor(Math.random() * enemyweights.length)]
-                            if (boss1flag == enemyIndex) {
+                    boss.x += boss.speedX;
+                    if (boss.x > canvas.width - 300 || boss.x < 0) boss.speedX *= -1;
+                    if (boss.y >= 50) {
+                        bossenemiesarr.forEach((enemy, enemyIndex) => {
+                            let bossflag = enemyweights[Math.floor(Math.random() * enemyweights.length)]
+                            if (bossflag == enemyIndex) {
                                 enemy.timer--
                                 if (enemy.timer <= 0) {
-                                    enemy.eypos = firstboss.y + 100
-                                    enemy.expos = firstboss.x + 125
+                                    enemy.eypos = boss.y + 100
+                                    enemy.expos = boss.x + 125
                                     boss1enemies.push(enemy)
                                     enemy.timer = Math.floor(Math.random() * 300) + 30 * firetimer
                                 }
@@ -613,7 +930,7 @@
                             if (enemy.eypos > canvas.height || enemy.killcount <= 0) {
                                 boss1enemies.splice(enemyIndex, 1)
                             }
-                            // enemy.expos = firstboss.x + 125
+
 
                             enemy.eypos += enemy.speed; // Move the enemy downwards based on its speed
                             enemyimg = enemy.id;
@@ -622,7 +939,7 @@
                             ctx.drawImage(enemyimg, enemy.expos, enemy.eypos, 50, 50);
                         });
                     }
-                    ctx.drawImage(firstboss.img, firstboss.x, firstboss.y, 300, 200);
+                    ctx.drawImage(boss.img, boss.x, boss.y, 300, 200);
 
                     //  Collision logic start
                     boss1enemies.forEach((enemy, enemyIndex) => {
@@ -646,39 +963,24 @@
                     })
 
                     //collision logic 
-                    // boss explosion logic start
-                    bossexplosions.forEach((bossexplosion, bossexplosionindex) => {
-                        ctx.drawImage(bossexplosion.id, bossexplosion.blastxpos, bossexplosion.blastypos, 100, 100)
-                        bossexplosion.timer--
-                        if (bossexplosion.timer <= 0) {
-                            bossexplosions.splice(bossexplosionindex, 1)
-                        }
-                    })
-                    // bossexplosion logic end
+
 
                     // enemy hit logic start
                     bullets.forEach((bull, bullindex) => {
-                        if (bull.bxpos < firstboss.x + 300 &&
-                            bull.bxpos + 25 > firstboss.x &&
-                            bull.bypos < firstboss.y + 200 &&
-                            bull.bypos + 25 > firstboss.y
+                        if (bull.bxpos < boss.x + 300 &&
+                            bull.bxpos + 25 > boss.x &&
+                            bull.bypos < boss.y + 100 &&
+                            bull.bypos + 25 > boss.y
                         ) {
 
-                            bossexplosions.push({ id: blast, blastxpos: bull.bxpos, blastypos: bull.bypos - 100, speed: 1, timer: 3 })
+                            bossexplosions.push({ id: blast, blastxpos: bull.bxpos, blastypos: bull.bypos, speed: 1, timer: 3 })
                             bullets.splice(bullindex, 1)
-                            firstboss.health = firstboss.health - firepowercount - 1
-                            console.log(firstboss.health)
+                            boss.health = boss.health - firepowercount - 1
+                            console.log(boss.health)
+
                         }
                         boss1enemies.forEach((enemy, enemyIndex) => {
 
-                            //                 // let firstboss = {
-                            //     img: boss1,
-                            //     x: 400,
-                            //     y: -200, // Start off-screen
-                            //     active: false,
-                            //     speedX: 2,
-                            //     health: 50
-                            // };
                             if (bull.bxpos < enemy.expos + 25 &&
                                 bull.bxpos + 25 > enemy.expos &&
                                 bull.bypos < enemy.eypos + 25 &&
@@ -691,35 +993,7 @@
 
 
                                 if (enemy.killcount <= 0) {
-                                    // deadenemy = enemy.id
-                                    // blastflag = true
-                                    // if (blastflag) {
-                                    //     ctx.drawImage(blast, blastposx, blastposy, 50, 50) // Draw explosion at the enemy's position
-                                    //     setTimeout(() => {
-                                    //         blastflag = false
-                                    //     }, 5000)
-
-                                    // }
-                                    explosions.push({ id: blast, blastxpos: enemy.expos, blastypos: enemy.eypos, speed: enemy.speed, timer: 30 })
-
-
-                                    // ctx.clearRect(enemy.expos, enemy.eypos, 50, 50) // Clear the enemy from the canvas
-                                    let flag = weights[Math.floor(Math.random() * weights.length)]
-                                    if (flag == 1) {
-                                        prize.push({ id: coin, lxpos: enemy.expos, lypos: enemy.eypos, lspeed: enemy.speed, type: "score" })
-                                    }
-                                    else if (flag == 4) {
-                                        prize.push({ id: firepower, lxpos: enemy.expos, lypos: enemy.eypos, lspeed: enemy.speed, type: "firepower" })
-                                    }
-                                    else if (flag == 2) {
-                                        prize.push({ id: gear, lxpos: enemy.expos, lypos: enemy.eypos, lspeed: enemy.speed, type: "gear" })
-                                    }
-                                    else if (flag == 3) {
-                                        prize.push({ id: life, lxpos: enemy.expos, lypos: enemy.eypos, lspeed: enemy.speed, type: "life" })
-                                    }
-                                    // console.log(prize)
-                                    bullets.splice(bullindex, 1) // Remove the bullet that hit the enemy
-                                    score++
+                                    bossexplo()
 
                                 }
 
@@ -730,63 +1004,32 @@
                         })
 
                     });
+                    // TRIGGER DEATH ANIMATION
+                    if (boss.health <= 0) {
+                        handleBossDeath(boss);
 
-                    // enemy hit logic end
+                    }
+                    return; // Important: Stop processing this bullet since it's gone
                 }
-                function boss2fight() {
+                function rocketbosshealthdecrement(hitboss) {
 
-                    secondboss.active = true;
+                    hitboss.health -= 20
+                    for (let i = 0; i < 2; i++) {
+                        bossexplosions.push({
+                            id: blast,
+                            blastxpos: hitboss.x + Math.random() * 250, // spread across boss width
+                            blastypos: hitboss.y + Math.random() * 150, // spread across boss height
+                            speed: 0,
+                            timer: 40 + (i * 10) // staggered timing
+                        });
+                    }
+                    // TRIGGER DEATH ANIMATION
+                    if (hitboss.health <= 0) {
+                        handleBossDeath(hitboss);
 
-                    // Move boss into view
-                    if (secondboss.y < 50) secondboss.y += 1;
-
-                    // Boss Side-to-Side movement
-                    secondboss.x += secondboss.speedX;
-                    if (secondboss.x > canvas.width - 300 || secondboss.x < 0) secondboss.speedX *= -1;
-
-
-
-                    // --- DRAW BOSS HEAD ON TOP ---
-                    ctx.drawImage(secondboss.img, secondboss.x, secondboss.y, 300, 200);
-
+                    }
+                    return
                 }
-                function boss3fight() {
-                    thirdboss.active = true;
-
-                    // Move boss into view
-                    if (thirdboss.y < 50) thirdboss.y += 1;
-
-                    // Boss Side-to-Side movement
-                    thirdboss.x += thirdboss.speedX;
-                    if (thirdboss.x > canvas.width - 300 || thirdboss.x < 0) thirdboss.speedX *= -1;
-
-
-
-                    // --- DRAW BOSS HEAD ON TOP ---
-                    ctx.drawImage(thirdboss.img, thirdboss.x, thirdboss.y, 300, 200);
-                }
-
-                // boss1 logic end
-
-                // boss logic start
-                // function drawRotatedImage(image, x, y, width, height, angle) {
-                //     // 1. Save the current state (so we don't mess up other drawings)
-                //     ctx.save();
-
-                //     // 2. Move the canvas to the rotation point
-                //     ctx.translate(x, y);
-
-                //     // 3. Rotate the canvas (angle is in radians: degrees * Math.PI / 180)
-                //     ctx.rotate(angle);
-
-                //     // 4. Draw the image
-                //     // Note: We draw at -width/2 and -height/2 so the center is at the pivot point
-                //     ctx.drawImage(image, -width / 2, -height / 2, width, height);
-
-                //     // 5. Restore the canvas to normal
-                //     ctx.restore();
-                // }
-                // boss logic end
 
                 requestAnimationFrame(animate)
 
