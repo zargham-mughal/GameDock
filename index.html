@@ -265,7 +265,6 @@
                 firetimer: 0
             };
 
-
             let thirdboss = {
                 img: boss3,
                 x: 400,
@@ -308,11 +307,9 @@
             let ang2r = 0
             let warningText = "";
             let warningTimer = 0;
-            let currentPhase = ""; // Tracks which level/boss we are currently in
-            // boss
+            let currentPhase = "";
+
             let isStarted = false;
-
-
             let keys = {
                 ArrowRight: false,
                 ArrowLeft: false,
@@ -321,8 +318,6 @@
                 Spacebar: false,
                 Enter: false
             }
-
-
             $(window).on('keydown', function (e) {
                 if (e.key == "ArrowRight") keys.ArrowRight = true;
                 if (e.key == "ArrowLeft") keys.ArrowLeft = true;
@@ -332,7 +327,6 @@
                 if (e.key == " ") keys.Spacebar = true;
 
             });
-
             $(window).on('keyup', function (e) {
                 if (e.key == "ArrowRight") keys.ArrowRight = false;
                 if (e.key == "ArrowLeft") keys.ArrowLeft = false;
@@ -374,13 +368,13 @@
 
 
                 // 1. DRAW BACKGROUND (Stars)
-                drawStars(); // Call your starfield logic here
+                drawStars();
                 if (!isStarted) {
                     displayStartScreen();
                     requestAnimationFrame(animate);
-                    return; // Stop here until the user clicks start
+                    return;
                 }
-                // 2. CHECK FOR GAME OVER / VICTORY
+
                 if (lifecount <= 0) {
                     isGameOver = true;
                 }
@@ -395,20 +389,17 @@
                     return; // Stops the rest of the game
                 }
 
-                // ... [Your existing movement, spawning, and boss logic goes here] ...
+
 
                 // 3. FINAL BOSS DEATH CHECK
                 if (thirdboss.health <= 0 && currentPhase === "Boss 3") {
-                    // We wait for the explosions to finish or trigger victory immediately
+
                     setTimeout(() => {
                         isVictory = true;
                     }, 2000);
 
                 }
-                // --- Draw Scrolling Space Background ---
 
-                // ---------------------------------------
-                // star animations end
                 // main stuff
                 // --- Level and Boss Phase Controller ---
                 // LEVEL 1
@@ -520,8 +511,7 @@
                         bossexplosions.splice(bossexplosionindex, 1)
                     }
                 })
-                // bossexplosion logic end
-                //  rocket fire logic start
+
                 if (firstboss.active) bosslife = firstboss
                 if (secondboss.active) bosslife = secondboss
                 if (thirdboss.active) bosslife = thirdboss
@@ -534,9 +524,6 @@
                     rxpos = pxpos
                     rypos = pypos
                     rocketfireflag = true
-                    // rockettimer = setTimeout(() => {
-                    //     resettimer()
-                    // }, 10000)
                 }
                 if (rocketfireflag) {
                     inc = 3 + inc
@@ -577,10 +564,9 @@
                             resettimer()
                         }
                     }
-                    // ctx.drawImage(rocket3, rxpos + inc, rypos - inc, 100, 100)
+
                 }
-                // rocketcount--    
-                // lastrocketcount = rocketcount
+
                 // rocket fire logic end
                 // rocket hit logic start
                 firedrockets.forEach((firedrocket, firedrocketindex) => {
@@ -588,13 +574,13 @@
                     firedrocket.timer--
                     if (firedrocket.timer <= 0) {
                         firedrockets.splice(firedrocketindex, 1)
-                        // ctx.clearRect(firedrocket.rbxpos, firedrocket.rbypos, 200, 200)
+
                     }
                 })
-                // Generic function to check if player hits the current boss
+
 
                 // player collision with boss
-                // Usage inside your animate loop:
+
                 if (score >= 10 && firstboss.health > 0) {
                     checkBossCollision(firstboss, 300, 200); // Boss 1 size
                 } else if (score >= 81 && secondboss.health > 0) {
@@ -689,9 +675,6 @@
                 // enemy animation start
                 function enemyspawning() {
                     if (!firstboss.active && !secondboss.active && !thirdboss.active) {
-                        //    enemies.forEach(enemy => {
-                        //             enemy.expos = Math.random() * (canvas.width - 50); // Random x position within canvas width
-                        //         })
 
                         enemies.forEach(enemy => {
 
@@ -712,10 +695,10 @@
                 // explosion function
                 function explo() {
                     enemies.forEach(enemy => {
-                        // ctx.clearRect(enemy.expos, enemy.eypos, 50, 50) // Clear the enemy from the canvas
+
                         dropEnemyPrize(enemy, weights, prize, true)
 
-                        // console.log(prize)
+
 
 
                     })
@@ -726,21 +709,18 @@
                     if (thirdboss.active) {
                         boss2enemies.forEach((enemy, enemyIndex) => {
 
-                            // ctx.clearRect(enemy.expos, enemy.eypos, 50, 50) // Clear the enemy from the canvas
                             dropEnemyPrize(enemy, weights, prize, false)
                             boss2enemies.splice(enemyIndex, 1)
-                            // boss1enemies = [];
-                            // console.log(prize)
+
 
                         })
                     }
                     boss1enemies.forEach((enemy, enemyIndex) => {
 
-                        // ctx.clearRect(enemy.expos, enemy.eypos, 50, 50) // Clear the enemy from the canvas
+
                         dropEnemyPrize(enemy, weights, prize, false)
                         boss1enemies.splice(enemyIndex, 1)
-                        // boss1enemies = [];
-                        // console.log(prize)
+
 
                     })
 
@@ -772,16 +752,15 @@
 
                     // 4. Bonus for winning
                     score += 50;
-                    console.log("bossdead")
-                    // 2. Clear the boss and reset for the next phase
+
 
 
                 }
                 // boss death logic end     
-                // Add this to your variable declarations at the top of your script
+
                 // secondbossbullet fire logic start
                 function fireSemiCircle(boss) {
-                    // 1. Setup timing (only fire every 90 frames, about 1.5 seconds)
+
                     if (!boss.fireTimer) boss.fireTimer = 0;
                     boss.fireTimer++;
 
@@ -843,34 +822,9 @@
                 }
                 // second boss bullet fire logic end
                 // boss1 logic end
-                // boss logic start
-                function drawRotatedTentacleleft(image, x, y, width, height, angle, flip = false) {
-                    ctx.save();
-                    ctx.translate(x, y); // This is the "Shoulder" where it attaches
-                    ctx.rotate(angle);
-                    if (flip) {
-                        ctx.scale(-1, 1); // Flips the tentacle horizontally
-                    }
 
-                    // Draw at 0 for Y so the TOP of the image stays at the (x,y) point
-                    ctx.drawImage(image, -width, -height / 2, width, height);
 
-                    ctx.restore();
-                }
-                function drawRotatedTentacleright(image, x, y, width, height, angle, flip = false) {
-                    ctx.save();
-                    ctx.translate(x, y); // This is the "Shoulder" where it attaches
-                    ctx.rotate(angle);
-                    if (flip) {
-                        ctx.scale(-1, 1); // Flips the tentacle horizontally
-                    }
 
-                    // Draw at 0 for Y so the TOP of the image stays at the (x,y) point
-                    ctx.drawImage(image, 0, -height / 2, width, height);
-
-                    ctx.restore();
-                }
-                // boss logic end
                 // prize function
                 function dropEnemyPrize(enemy, weights, prizeList, pflag) {
                     explosions.push({ id: blast, blastxpos: enemy.expos, blastypos: enemy.eypos, speed: enemy.speed, timer: 30 })
@@ -941,7 +895,7 @@
                             }
 
 
-                            enemy.eypos += enemy.speed; // Move the enemy downwards based on its speed
+                            enemy.eypos += enemy.speed;
                             enemyimg = enemy.id;
 
 
@@ -1015,7 +969,7 @@
                         handleBossDeath(boss);
 
                     }
-                    return; // Important: Stop processing this bullet since it's gone
+                    return
                 }
                 function boss3fight() {
 
@@ -1034,24 +988,22 @@
                             }
                         })
                     }
-
-                    // 2. Homing Logic using only X and Y coordinates
+                    // homing logic
                     boss2enemies.forEach((m, index) => {
-                        // Calculate the distance (difference) on each axis
+
                         let dx = (pxpos + 25) - m.expos;
                         let dy = (pypos + 25) - m.eypos;
 
-                        // Calculate total distance using Pythagorean theorem (sqrt(x^2 + y^2))
+
                         let distance = Math.sqrt(dx * dx + dy * dy);
 
                         if (distance > 1) {
-                            // Move the missile by a fraction of the distance based on speed
-                            // This effectively "points" the missile at the player without angles
+
                             m.expos += (dx / distance) * 3;
                             m.eypos += (dy / distance) * 3;
                         }
 
-                        // 3. Draw the Missile
+
 
                         ctx.drawImage(m.id, m.expos, m.eypos, 50, 50);
 
@@ -1164,7 +1116,7 @@
 
                 function triggerWarning(text) {
                     warningText = text;
-                    warningTimer = 120; // Show for 120 frames (approx 2 seconds)
+                    warningTimer = 120; // Show for (approx 2 seconds)
                     return
                 }
                 function drawStars() {
