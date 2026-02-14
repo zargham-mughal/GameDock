@@ -4,33 +4,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jet Test</title>
+    <title>Game Dock</title>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
 <style>
     body {
-        background: radial-gradient(circle, #1a1a2e 0%, #0f0f1b 100%);
+        background: radial-gradient(circle, #1a1a2e 0%, #050505 100%);
         display: flex;
-        flex-direction: column;
         justify-content: center;
         align-items: center;
         height: 100vh;
         margin: 0;
+        overflow: hidden;
         font-family: sans-serif;
         color: #fff;
-        overflow: hidden;
+        flex-direction: column;
     }
 
 
-    #gameCanvas {
-        border: 2px solid #444;
-        box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
-        background: #000;
-        /* Fallback */
-    }
 
-    /* Outer glowing container for the game */
     .game-container {
+
+        height: 80vh;
         position: relative;
         padding: 10px;
         background: #333;
@@ -39,22 +34,26 @@
         border: 4px solid #444;
     }
 
-    #gameCanvas {
-        display: block;
-        background: #000;
-        border-radius: 4px;
-        cursor: crosshair;
+    .game-wrapper {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        box-sizing: border-box;
     }
 
-    /* Top Info Bar UI */
-    .ui-overlay {
-        position: absolute;
-        top: -50px;
-        left: 0;
-        width: 100%;
-        display: flex;
-        justify-content: space-between;
-        pointer-events: none;
+    #gameCanvas {
+
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        border: 2px solid cyan;
+        box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+        background: #000;
+
     }
 
     .ui-card {
@@ -62,35 +61,27 @@
         padding: 5px 15px;
         border-radius: 5px;
         border-bottom: 2px solid cyan;
-        font-size: 14px;
+        font-size: 20px;
         letter-spacing: 1px;
     }
 
-    .controls-hint {
-        margin-top: 20px;
-        color: #888;
-        font-size: 12px;
-        text-transform: uppercase;
-    }
+
 
     b {
         color: cyan;
     }
 </style>
 
-<body style="background: #222; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0;">
+<body>
     <div class="game-container">
-        <div class="ui-overlay">
-            <div class="ui-card">MISSION: <b>NEBULA STRIKE</b></div>
-            <div class="ui-card">PILOT: <b>ACE-01</b></div>
+
+        <div class="game-wrapper">
+            <canvas id="gameCanvas" width="1000" height="700"
+                style="border:2px solid white; background: #000;"></canvas>
         </div>
-
-        <canvas id="gameCanvas" width="1000" height="700" style="border:2px solid white; background: #000;"></canvas>
     </div>
 
-    <div class="controls-hint">
-        [Arrows] Move • [Space] Fire • [Enter] Rocket • [Score 10/81/150] Bosses
-    </div>
+
 
 
     <script>
@@ -366,7 +357,13 @@
                 if (keys.ArrowRight && keys.ArrowUp) pxpos += playerspeed; pypos -= playerspeed;
                 if (keys.ArrowRight && keys.ArrowDown) pxpos += playerspeed; pypos += playerspeed;
 
+                // Keep player inside X boundaries
+                if (pxpos < 0) pxpos = 0;
+                if (pxpos > canvas.width - 50) pxpos = canvas.width - 50;
 
+                // Keep player inside Y boundaries
+                if (pypos < 0) pypos = 0;
+                if (pypos > canvas.height - 50) pypos = canvas.height - 50;
 
                 // Draw Player
                 if (jetImg.complete) {
@@ -594,6 +591,17 @@
                         // ctx.clearRect(firedrocket.rbxpos, firedrocket.rbypos, 200, 200)
                     }
                 })
+                // Generic function to check if player hits the current boss
+
+                // player collision with boss
+                // Usage inside your animate loop:
+                if (score >= 10 && firstboss.health > 0) {
+                    checkBossCollision(firstboss, 300, 200); // Boss 1 size
+                } else if (score >= 81 && secondboss.health > 0) {
+                    checkBossCollision(secondboss, 300, 200); // Boss 2 size
+                } else if (score >= 150 && thirdboss.health > 0) {
+                    checkBossCollision(thirdboss, 500, 300); // Boss 3 size
+                }
                 // rocket hit logic end
                 // rocket logic end
                 // fire logic start
@@ -1185,10 +1193,10 @@
                     // Prompt
                     ctx.shadowBlur = 0;
                     ctx.fillStyle = "white";
-                    ctx.font = "24px 'Orbitron', sans-serif";
+                    ctx.font = "28px 'Orbitron', sans-serif";
                     ctx.fillText("PRESS 'S' OR CLICK TO BEGIN MISSION", canvas.width / 2, canvas.height / 2 + 50);
 
-                    ctx.font = "14px 'Orbitron', sans-serif";
+                    ctx.font = "20px 'Orbitron', sans-serif";
                     ctx.fillStyle = "#888";
                     ctx.fillText("ARROWS: MOVE | SPACE: FIRE | ENTER: ROCKETS", canvas.width / 2, canvas.height / 2 + 100);
 
@@ -1212,6 +1220,24 @@
                             console.log("Game Started via Click");
                         }
                     });
+                }
+                function checkBossCollision(boss, width, height) {
+                    if (pxpos < boss.x + width &&
+                        pxpos + 50 > boss.x &&
+                        pypos < boss.y + height &&
+                        pypos + 50 > boss.y) {
+
+                        if (!isinvincible) {
+                            lifecount--;
+                            isinvincible = true;
+                            // Create a big explosion at player position
+                            explosions.push({ id: blast, blastxpos: pxpos, blastypos: pypos, speed: 0, timer: 30 });
+
+                            setTimeout(() => {
+                                isinvincible = false;
+                            }, 3000);
+                        }
+                    }
                 }
                 requestAnimationFrame(animate)
 
