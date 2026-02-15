@@ -91,7 +91,7 @@
             let pxpos = ((canvas.width) / 2) - 25, pypos = canvas.height - 100;
             const playerspeed = 10;
             let isinvincible = false;
-            let speedinc = 0.2
+            let speedinc = 1
             // Starfield variables
             let stars = [];
             for (let i = 0; i < 100; i++) {
@@ -199,6 +199,7 @@
             for (let i = 0; i <= 100; i++) {
                 weights.push(1)
             }
+            let enemypushloopflag = true
             let bosslife
             let bossMissiles = [];
             let noscore = true
@@ -215,7 +216,8 @@
             let blastflag = false
             // 1. Array to hold multiple enemies
             let pushflag = true
-            let enemies = [
+            let enemies = []
+            let enemies1 = [
                 { id: ufo1, expos: 400 + Math.random() * canvas.width, eypos: -100, speed: 2 * speedinc, killcount: 4 },
                 { id: ufo2, expos: 700 + Math.random() * canvas.width, eypos: -205, speed: 1.5 * speedinc, killcount: 4 },
                 { id: ufo3, expos: 100 + Math.random() * canvas.width, eypos: -206, speed: 3 * speedinc, killcount: 4 },
@@ -230,6 +232,7 @@
                 { id: ufo12, expos: 350 + Math.random() * canvas.width, eypos: -604, speed: 2.3 * speedinc, killcount: 4 }
 
             ];
+
             let enemyweights = [1, 2, 3, 4, 5, 6]
             let firetimer = 1
 
@@ -301,10 +304,7 @@
                 { id: ufo11, expos: thirdboss.x, eypos: thirdboss.y, speed: 3.2, timer: Math.floor(Math.random() * 300) + 30 * firetimer, killcount: 4 },
                 { id: ufo12, expos: thirdboss.x, eypos: thirdboss.y, speed: 2.3, timer: Math.floor(Math.random() * 300) + 30 * firetimer, killcount: 4 }
             ]
-            let ang1l = 0
-            let ang2l = 0
-            let ang1r = 0
-            let ang2r = 0
+
             let warningText = "";
             let warningTimer = 0;
             let currentPhase = "";
@@ -318,6 +318,7 @@
                 Spacebar: false,
                 Enter: false
             }
+            let enemyspawnflag = false
             $(window).on('keydown', function (e) {
                 if (e.key == "ArrowRight") keys.ArrowRight = true;
                 if (e.key == "ArrowLeft") keys.ArrowLeft = true;
@@ -336,7 +337,7 @@
                 if (e.key == " ") keys.Spacebar = false;
             });
 
-
+            let test = true
             // Main Game Loop
 
             function animate() {
@@ -365,7 +366,6 @@
                 }
                 // player animations end
                 // star animations start
-
 
                 // 1. DRAW BACKGROUND (Stars)
                 drawStars();
@@ -402,57 +402,109 @@
 
                 // main stuff
                 // --- Level and Boss Phase Controller ---
+
                 // LEVEL 1
                 if (score < 10 && currentPhase !== "Level 1") {
-                    currentPhase = "Level 1";
+
                     triggerWarning("LEVEL 1: NEBULA ENTRY");
+                    setTimeout(() => {
+                        currentPhase = "Level 1"
+                        enemyspawnflag = true
+                    }, 2000);
+
                 }
-                speedinc = 0.3
-                enemyspawning()
+
                 // BOSS 1
                 if (score >= 10 && firstboss.health > 0) {
                     if (currentPhase !== "Boss 1") {
-                        currentPhase = "Boss 1";
-                        triggerWarning("WARNING: BOSS 1 DETECTED");
+
+                        triggerWarning("BOSS 1 DETECTED");
+                        setTimeout(() => {
+                            currentPhase = "Boss 1";
+                        }, 2000);
+                        enemyspawnflag = false
+
                     }
                     bossfight(firstboss);
                 }
                 // LEVEL 2
                 else if (score >= 50 && score < 81 && firstboss.health <= 0) {
                     if (currentPhase !== "Level 2") {
-                        currentPhase = "Level 2";
+
                         triggerWarning("LEVEL 2: ASTEROID BELT");
+                        setTimeout(() => {
+                            currentPhase = "Level 2"
+                            enemyspawnflag = true
+                        }, 2000);
+
                     }
-                    enemyspawning();
+
                 }
                 // BOSS 2
                 if (score >= 81 && secondboss.health > 0) {
                     if (currentPhase !== "Boss 2") {
-                        currentPhase = "Boss 2";
-                        triggerWarning("WARNING: BOSS 2 DETECTED");
+
+                        triggerWarning("BOSS 2 DETECTED");
+                        setTimeout(() => {
+                            currentPhase = "Boss 2";
+
+                        }, 2000);
+                        enemyspawnflag = false
+
                     }
                     bossfight(secondboss);
                 }
                 // FINAL LEVEL (Level 3)
                 else if (score >= 100 && score < 150 && secondboss.health <= 0) {
                     if (currentPhase !== "Level 3") {
-                        currentPhase = "Level 3";
+
                         triggerWarning("FINAL LEVEL: THE VOID");
+                        setTimeout(() => {
+                            currentPhase = "Level 3"
+                            enemyspawnflag = true
+                        }, 2000);
                     }
-                    enemyspawning();
+
                 }
                 // FINAL BOSS (Boss 3)
                 if (score >= 150 && thirdboss.health > 0) {
                     if (currentPhase !== "Boss 3") {
-                        currentPhase = "Boss 3";
-                        triggerWarning("WARNING: FINAL BOSS");
+
+                        triggerWarning("FINAL BOSS");
+                        setTimeout(() => {
+                            currentPhase = "Boss 3";
+                        }, 2000);
+                        enemyspawnflag = false
+
                     }
                     bossfight(thirdboss);
                     boss3fight();
                 }
 
-
+                if (enemyspawnflag) {
+                    enemyspawning()
+                }
+                if (enemypushloopflag) {
+                    enemies = enemies1
+                    enemypushloopflag = false
+                }
                 // main stuff
+                function enemyspawning() {
+                    enemies.forEach(enemy => {
+                        let speed = enemy.speed
+                        if (firstboss.health <= 0) { speed *= 1 }
+                        if (secondboss.health <= 0) { speed *= 4 }
+                        if (thirdboss.health <= 0) { speed *= 6 }
+                        enemy.eypos += speed; // Move the enemy downwards based on its speed
+                        enemyimg = enemy.id;
+                        if (enemy.eypos > canvas.height) {
+                            enemy.eypos = -50;
+                            enemy.expos = Math.random() * (canvas.width - 50);
+                        }
+                        ctx.drawImage(enemyimg, enemy.expos, enemy.eypos, 50, 50);
+                    })
+
+                }
                 //  Collision logic start
                 enemies.forEach(enemy => {
                     if (pxpos < enemy.expos + 50 &&
@@ -618,8 +670,6 @@
                         ) {
                             enemy.killcount = enemy.killcount - firepowercount - 1
                             bullets.splice(bullindex, 1) // Remove the bullet that hit the enemy
-                            console.log(firepowercount)
-                            console.log(enemy.killcount)
                             if (enemy.killcount <= 0) {
 
                                 dropEnemyPrize(enemy, weights, prize)
@@ -673,34 +723,18 @@
 
                 })
                 // enemy animation start
-                function enemyspawning() {
-                    if (!firstboss.active && !secondboss.active && !thirdboss.active) {
-
-                        enemies.forEach(enemy => {
-
-                            enemy.eypos += enemy.speed; // Move the enemy downwards based on its speed
-                            enemyimg = enemy.id;
-                            if (enemy.eypos > canvas.height) {
-                                enemy.eypos = -50;
-
-                                enemy.expos = Math.random() * (canvas.width - 50);
-
-                            }
-
-                            ctx.drawImage(enemyimg, enemy.expos, enemy.eypos, 50, 50);
-                        });
-                    }
+                if (!enemyspawnflag) {
+                    enemies.forEach((enemy, enemyindex) => {
+                        if (enemy.eypos < canvas.height)
+                            enemy.eypos = -100
+                    })
                 }
+
                 // enemy animation end 
                 // explosion function
                 function explo() {
                     enemies.forEach(enemy => {
-
                         dropEnemyPrize(enemy, weights, prize, true)
-
-
-
-
                     })
                 }
                 // explosion function
@@ -708,11 +742,8 @@
                 function bossexplo() {
                     if (thirdboss.active) {
                         boss2enemies.forEach((enemy, enemyIndex) => {
-
                             dropEnemyPrize(enemy, weights, prize, false)
                             boss2enemies.splice(enemyIndex, 1)
-
-
                         })
                     }
                     boss1enemies.forEach((enemy, enemyIndex) => {
@@ -942,7 +973,6 @@
                             bossexplosions.push({ id: blast, blastxpos: bull.bxpos, blastypos: bull.bypos, speed: 1, timer: 3 })
                             bullets.splice(bullindex, 1)
                             boss.health = boss.health - firepowercount - 1
-                            console.log(boss.health)
 
                         }
                         boss1enemies.forEach((enemy, enemyIndex) => {
@@ -954,8 +984,6 @@
                             ) {
                                 enemy.killcount = enemy.killcount - firepowercount - 1
                                 bullets.splice(bullindex, 1) // Remove the bullet that hit the enemy
-                                console.log(firepowercount)
-                                console.log(enemy.killcount)
                                 if (enemy.killcount <= 0) {
                                     bossexplo()
                                 }
@@ -1053,19 +1081,12 @@
                             ) {
                                 enemy.killcount = enemy.killcount - firepowercount - 1
                                 bullets.splice(bullindex, 1) // Remove the bullet that hit the enemy
-                                console.log(firepowercount)
-                                console.log(enemy.killcount)
                                 if (enemy.killcount <= 0) {
                                     bossexplo()
                                     enemy.killcount = 2
                                     boss2enemies.splice(enemyIndex, 1)
-
                                 }
-
-
-
                             }
-
                         })
                     })
                 }
@@ -1115,9 +1136,13 @@
 
 
                 function triggerWarning(text) {
-                    warningText = text;
                     warningTimer = 120; // Show for (approx 2 seconds)
-                    return
+                    ctx.fillStyle = "cyan";
+                    ctx.font = "bold 70px 'Orbitron', sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.shadowColor = "cyan";
+                    ctx.fillText(text, canvas.width / 2, canvas.height / 2 - 50);
+
                 }
                 function drawStars() {
                     ctx.fillStyle = "white";
@@ -1152,7 +1177,7 @@
                     ctx.fillStyle = "#888";
                     ctx.fillText("ARROWS: MOVE | SPACE: FIRE | ENTER: ROCKETS", canvas.width / 2, canvas.height / 2 + 100);
 
-                    ctx.textAlign = "start"; // Reset for other game text
+                    // ctx.textAlign = "start"; // Reset for other game text
 
 
                     // Start with Key Press
@@ -1160,7 +1185,6 @@
                         if (e.key.toLowerCase() === "s") {
                             if (!isStarted) {
                                 isStarted = true;
-                                console.log("Game Started via Key");
                             }
                         }
                     });
@@ -1168,8 +1192,7 @@
                     // Start with Mouse Click
                     canvas.addEventListener("mousedown", function () {
                         if (!isStarted) {
-                            isStarted = true;
-                            console.log("Game Started via Click");
+                            isStarted = true
                         }
                     });
                 }
