@@ -76,7 +76,7 @@
     <div class="game-container">
 
         <div class="game-wrapper">
-            <canvas id="gameCanvas" width="1000" height="700"
+            <canvas id="gameCanvas" width="1920" height="1080"
                 style="border:2px solid white; background: #000;"></canvas>
         </div>
     </div>
@@ -215,6 +215,10 @@
             const bulletSpeed = 10;
             let blastflag = false
             // 1. Array to hold multiple enemies
+            let bossTimer = 0; // Current time remaining in frames
+            let maxBossTime = 60 * 120;
+
+            let timerActive = false;
             let pushflag = true
             let enemies = []
             let enemies1 = [
@@ -421,7 +425,9 @@
                         triggerWarning("BOSS 1 DETECTED");
                         setTimeout(() => {
                             currentPhase = "Boss 1";
+
                         }, 2000);
+                        timerActive = false
                         enemyspawnflag = false
 
                     }
@@ -448,7 +454,9 @@
                         setTimeout(() => {
                             currentPhase = "Boss 2";
 
+
                         }, 2000);
+                        timerActive = false
                         enemyspawnflag = false
 
                     }
@@ -473,7 +481,9 @@
                         triggerWarning("FINAL BOSS");
                         setTimeout(() => {
                             currentPhase = "Boss 3";
+
                         }, 2000);
+                        timerActive = false
                         enemyspawnflag = false
 
                     }
@@ -897,7 +907,26 @@
                     if (secondboss.active) {
                         fireSemiCircle(boss)
                     }
+                    if (!timerActive && boss.health > 0) {
+                        bossTimer = maxBossTime; // Reset to 30 seconds
+                        timerActive = true;
+                    }
 
+                    // 2. The Countdown
+                    if (timerActive) {
+                        bossTimer--;
+                        if (bossTimer <= 0) {
+                            isGameOver = true;
+                            timerActive = false;
+                        }
+                    }
+
+                    // 3. Stop if Boss Dies
+                    if (boss.health <= 0) {
+                        timerActive = false;
+                    }
+
+                    drawBossUI(boss, 30)
                     boss.active = true;
 
                     // Move boss into view
@@ -1131,8 +1160,41 @@
 
                     ctx.textAlign = "start"; // Reset for future frames
                 }
+                function drawBossUI(boss, maxHealth) {
+                    const barWidth = 400;
+                    const barHeight = 20;
+                    const x = (canvas.width - barWidth) / 2;
+                    const y = 30;
 
+                    // --- HEALTH BAR ---
+                    ctx.fillStyle = "#333";
+                    ctx.fillRect(x, y, barWidth, barHeight);
 
+                    let healthPercent = boss.health / maxHealth;
+                    ctx.fillStyle = healthPercent > 0.3 ? "cyan" : "red";
+                    ctx.fillRect(x, y, barWidth * Math.max(0, healthPercent), barHeight);
+
+                    ctx.strokeStyle = "white";
+                    ctx.strokeRect(x, y, barWidth, barHeight);
+
+                    // --- TIMER DISPLAY ---
+                    if (timerActive) {
+                        let secondsLeft = Math.ceil(bossTimer / 60);
+                        ctx.fillStyle = secondsLeft <= 10 ? "#ff4d4d" : "white"; // Turn red at 10s
+                        ctx.font = "bold 24px 'Orbitron', sans-serif";
+                        ctx.textAlign = "left";
+
+                        // Positioned to the right of the health bar
+                        ctx.fillText("⏳ " + secondsLeft + "s", x + barWidth + 20, y + 18);
+                    }
+
+                    // Label
+                    ctx.fillStyle = "white";
+                    ctx.font = "16px Arial";
+                    ctx.textAlign = "center";
+                    ctx.fillText(currentPhase + " HP", canvas.width / 2, y - 10);
+                    ctx.textAlign = "start";
+                }
 
 
                 function triggerWarning(text) {
@@ -1165,7 +1227,9 @@
                     ctx.textAlign = "center";
                     ctx.shadowBlur = 15;
                     ctx.shadowColor = "cyan";
-                    ctx.fillText("NEBULA STRIKE", canvas.width / 2, canvas.height / 2 - 50);
+                    ctx.fillText("NEBULA STRIKE", canvas.width / 2, canvas.height / 2 - 80);
+                    ctx.font = "bold 50px 'Orbitron', sans-serif";
+                    ctx.fillText("By GameDock", canvas.width / 2, canvas.height / 2);
 
                     // Prompt
                     ctx.shadowBlur = 0;
@@ -1175,9 +1239,11 @@
 
                     ctx.font = "20px 'Orbitron', sans-serif";
                     ctx.fillStyle = "#888";
-                    ctx.fillText("ARROWS: MOVE | SPACE: FIRE | ENTER: ROCKETS", canvas.width / 2, canvas.height / 2 + 100);
-
-                    // ctx.textAlign = "start"; // Reset for other game text
+                    ctx.fillText(".Movement: Use the Arrow Keys to maneuver your jet through the starfield", canvas.width / 2, canvas.height / 2 + 100)
+                    ctx.fillText(".Primary Weapon: Press Spacebar to fire your front-mounted blasters", canvas.width / 2, canvas.height / 2 + 150);
+                    ctx.fillText(".Heavy Ordnance: Press Enter to launch a high-damage Rocket. Rockets deal massive area damage", canvas.width / 2, canvas.height / 2 + 200);
+                    ctx.fillText(".Power ups: Scavenge through power ups left behind by enemies", canvas.width / 2, canvas.height / 2 + 250);
+                    ctx.fillText(`Note:Rockets have been set to infinite for checkers to complete game easily`, canvas.width / 2, canvas.height / 2 + 300);
 
 
                     // Start with Key Press
