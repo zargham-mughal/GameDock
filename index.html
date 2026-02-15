@@ -41,34 +41,20 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        padding: 20px;
+        padding: 10px;
         box-sizing: border-box;
     }
 
     #gameCanvas {
-
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
+        width: 100%;
+        height: 100%;
+        /* max-width: 100%;
+        max-height: 100%; */
+        /* object-fit: contain; */
         border: 2px solid cyan;
         box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
         background: #000;
 
-    }
-
-    .ui-card {
-        background: rgba(0, 0, 0, 0.7);
-        padding: 5px 15px;
-        border-radius: 5px;
-        border-bottom: 2px solid cyan;
-        font-size: 20px;
-        letter-spacing: 1px;
-    }
-
-
-
-    b {
-        color: cyan;
     }
 </style>
 
@@ -80,10 +66,6 @@
                 style="border:2px solid white; background: #000;"></canvas>
         </div>
     </div>
-
-
-
-
     <script>
         $(document).ready(function () {
             const canvas = document.getElementById("gameCanvas");
@@ -92,7 +74,6 @@
             const playerspeed = 10;
             let isinvincible = false;
             let speedinc = 1
-            // Starfield variables
             let stars = [];
             for (let i = 0; i < 100; i++) {
                 stars.push({
@@ -102,7 +83,6 @@
                     speed: Math.random() * 3 + 1
                 });
             }
-
             // images objects
             const jetImg = new Image();
             jetImg.src = "jet.webp"
@@ -195,7 +175,7 @@
             let lastrocketcount = 0
             let firerocket = []
             let rocketfireflag = false
-            let weights = [1, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4] // random prize generating array
+            let weights = [1, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4]
             for (let i = 0; i <= 100; i++) {
                 weights.push(1)
             }
@@ -205,19 +185,16 @@
             let noscore = true
             let prize = []
             let score = 0;
-            let lifecount = 3; // Initial life count
-            let firepowercount = 0; // Initial firepower count
-            let firepowerinc = 0; // firepower increment
-            let rocketcount = 0; // Initial rocket count
-            let rocketcountinc = 0; // rocket increment
-            //array for bullets
+            let lifecount = 3;
+            let firepowercount = 0;
+            let firepowerinc = 0;
+            let rocketcount = 0;
+            let rocketcountinc = 0;
             let bullets = [];
             const bulletSpeed = 10;
             let blastflag = false
-            // 1. Array to hold multiple enemies
-            let bossTimer = 0; // Current time remaining in frames
+            let bossTimer = 0;
             let maxBossTime = 60 * 120;
-
             let timerActive = false;
             let pushflag = true
             let enemies = []
@@ -234,12 +211,9 @@
                 { id: ufo10, expos: 150 + Math.random() * canvas.width, eypos: -507, speed: 4.5 * speedinc, killcount: 4 },
                 { id: ufo11, expos: 250 + Math.random() * canvas.width, eypos: -705, speed: 3.2 * speedinc, killcount: 4 },
                 { id: ufo12, expos: 350 + Math.random() * canvas.width, eypos: -604, speed: 2.3 * speedinc, killcount: 4 }
-
             ];
-
             let enemyweights = [1, 2, 3, 4, 5, 6]
             let firetimer = 1
-
             let isGameOver = false;
             let isVictory = false;
             //  boss
@@ -249,7 +223,7 @@
                 y: -200, // Start off-screen
                 active: false,
                 speedX: 2,
-                health: 30
+                health: 100
             };
             let bossexplosions = []
             let boss1enemies = [];
@@ -267,18 +241,17 @@
                 y: -200, // Start off-screen
                 active: false,
                 speedX: 2,
-                health: 30,
+                health: 100,
                 bullets: [],
                 firetimer: 0
             };
-
             let thirdboss = {
                 img: boss3,
                 x: 400,
                 y: -200, // Start off-screen
                 active: false,
                 speedX: 2,
-                health: 30
+                health: 100
             };
             let firetimerth = 0.5
             let boss2enemiesarr = [
@@ -308,11 +281,9 @@
                 { id: ufo11, expos: thirdboss.x, eypos: thirdboss.y, speed: 3.2, timer: Math.floor(Math.random() * 300) + 30 * firetimer, killcount: 4 },
                 { id: ufo12, expos: thirdboss.x, eypos: thirdboss.y, speed: 2.3, timer: Math.floor(Math.random() * 300) + 30 * firetimer, killcount: 4 }
             ]
-
             let warningText = "";
             let warningTimer = 0;
             let currentPhase = "";
-
             let isStarted = false;
             let keys = {
                 ArrowRight: false,
@@ -330,8 +301,7 @@
                 if (e.key == "ArrowDown") keys.ArrowDown = true;
                 if (e.key == "Enter") keys.Enter = true;
                 if (e.key == " ") keys.Spacebar = true;
-
-            });
+            })
             $(window).on('keyup', function (e) {
                 if (e.key == "ArrowRight") keys.ArrowRight = false;
                 if (e.key == "ArrowLeft") keys.ArrowLeft = false;
@@ -340,7 +310,6 @@
                 if (e.key == "Enter") keys.Enter = false;
                 if (e.key == " ") keys.Spacebar = false;
             });
-
             let test = true
             // Main Game Loop
 
@@ -355,24 +324,27 @@
                 if (keys.ArrowLeft && keys.ArrowDown) pxpos -= playerspeed; pypos += playerspeed;
                 if (keys.ArrowRight && keys.ArrowUp) pxpos += playerspeed; pypos -= playerspeed;
                 if (keys.ArrowRight && keys.ArrowDown) pxpos += playerspeed; pypos += playerspeed;
-
                 // Keep player inside X boundaries
                 if (pxpos < 0) pxpos = 0;
                 if (pxpos > canvas.width - 50) pxpos = canvas.width - 50;
-
                 // Keep player inside Y boundaries
                 if (pypos < 0) pypos = 0;
                 if (pypos > canvas.height - 50) pypos = canvas.height - 50;
-
                 // Draw Player
                 if (jetImg.complete) {
                     ctx.drawImage(jetImg, pxpos, pypos, 50, 50);
                 }
                 // player animations end
                 // star animations start
-
-                // 1. DRAW BACKGROUND (Stars)
+                // DRAW BACKGROUND (Stars)
                 drawStars();
+                if (isinvincible) {
+                    ctx.strokeStyle = "#39FF14"
+                    ctx.beginPath()
+                    ctx.arc(pxpos + 25, pypos + 25, 50, 0, Math.PI * 2);
+                    ctx.stroke()
+                }
+
                 if (!isStarted) {
                     displayStartScreen();
                     requestAnimationFrame(animate);
@@ -385,94 +357,75 @@
 
                 if (isGameOver) {
                     displayEndScreen("GAME OVER", "#ff0000");
-                    return; // Stops the rest of the game from updating
+                    return
                 }
 
                 if (isVictory) {
                     displayEndScreen("VICTORY - GALAXY SAVED", "#00ff00");
-                    return; // Stops the rest of the game
+                    return
                 }
 
 
 
-                // 3. FINAL BOSS DEATH CHECK
+                //  FINAL BOSS DEATH CHECK
                 if (thirdboss.health <= 0 && currentPhase === "Boss 3") {
-
                     setTimeout(() => {
                         isVictory = true;
                     }, 2000);
-
                 }
-
                 // main stuff
                 // --- Level and Boss Phase Controller ---
-
                 // LEVEL 1
                 if (score < 10 && currentPhase !== "Level 1") {
-
                     triggerWarning("LEVEL 1: NEBULA ENTRY");
                     setTimeout(() => {
                         currentPhase = "Level 1"
                         enemyspawnflag = true
                     }, 2000);
-
                 }
-
                 // BOSS 1
                 if (score >= 10 && firstboss.health > 0) {
                     if (currentPhase !== "Boss 1") {
-
                         triggerWarning("BOSS 1 DETECTED");
                         setTimeout(() => {
                             currentPhase = "Boss 1";
-
                         }, 2000);
                         timerActive = false
                         enemyspawnflag = false
-
                     }
                     bossfight(firstboss);
                 }
                 // LEVEL 2
                 else if (score >= 50 && score < 81 && firstboss.health <= 0) {
                     if (currentPhase !== "Level 2") {
-
                         triggerWarning("LEVEL 2: ASTEROID BELT");
                         setTimeout(() => {
                             currentPhase = "Level 2"
                             enemyspawnflag = true
                         }, 2000);
-
                     }
-
                 }
                 // BOSS 2
                 if (score >= 81 && secondboss.health > 0) {
                     if (currentPhase !== "Boss 2") {
-
                         triggerWarning("BOSS 2 DETECTED");
                         setTimeout(() => {
                             currentPhase = "Boss 2";
-
-
                         }, 2000);
                         timerActive = false
                         enemyspawnflag = false
-
                     }
                     bossfight(secondboss);
                 }
                 // FINAL LEVEL (Level 3)
                 else if (score >= 100 && score < 150 && secondboss.health <= 0) {
                     if (currentPhase !== "Level 3") {
-
                         triggerWarning("FINAL LEVEL: THE VOID");
                         setTimeout(() => {
                             currentPhase = "Level 3"
                             enemyspawnflag = true
                         }, 2000);
                     }
-
                 }
                 // FINAL BOSS (Boss 3)
                 if (score >= 150 && thirdboss.health > 0) {
@@ -513,7 +466,6 @@
                         }
                         ctx.drawImage(enemyimg, enemy.expos, enemy.eypos, 50, 50);
                     })
-
                 }
                 //  Collision logic start
                 enemies.forEach(enemy => {
@@ -522,6 +474,7 @@
                         pypos < enemy.eypos + 50 &&
                         pypos + 50 > enemy.eypos) {
                         if (isinvincible) {
+                            shield = true
                             return
                         }
                         if (!isinvincible) {
@@ -536,9 +489,7 @@
                                 isinvincible = false; // Reset invincibility after 3 seconds
                             }, 3000)
                         }
-
                     }
-
                 })
                 //collision logic end
                 //  score logic start
@@ -626,9 +577,7 @@
                             resettimer()
                         }
                     }
-
                 }
-
                 // rocket fire logic end
                 // rocket hit logic start
                 firedrockets.forEach((firedrocket, firedrocketindex) => {
@@ -639,16 +588,15 @@
 
                     }
                 })
-
-
                 // player collision with boss
-
                 if (score >= 10 && firstboss.health > 0) {
-                    checkBossCollision(firstboss, 300, 200); // Boss 1 size
-                } else if (score >= 81 && secondboss.health > 0) {
-                    checkBossCollision(secondboss, 300, 200); // Boss 2 size
-                } else if (score >= 150 && thirdboss.health > 0) {
-                    checkBossCollision(thirdboss, 500, 300); // Boss 3 size
+                    checkBossCollision(firstboss, 300, 200)
+                }
+                else if (score >= 81 && secondboss.health > 0) {
+                    checkBossCollision(secondboss, 300, 200)
+                }
+                else if (score >= 150 && thirdboss.health > 0) {
+                    checkBossCollision(thirdboss, 500, 300)
                 }
                 // rocket hit logic end
                 // rocket logic end
@@ -679,20 +627,17 @@
                             bull.bypos + 25 > enemy.eypos
                         ) {
                             enemy.killcount = enemy.killcount - firepowercount - 1
-                            bullets.splice(bullindex, 1) // Remove the bullet that hit the enemy
+                            bullets.splice(bullindex, 1)
                             if (enemy.killcount <= 0) {
-
                                 dropEnemyPrize(enemy, weights, prize)
-
                                 enemy.eypos = -enemy.eypos - 10
                                 enemy.killcount = 4
-                                enemy.expos = Math.random() * (canvas.width - 50); // Respawn the enemy at a new random position
-                                bullets.splice(bullindex, 1) // Remove the bullet that hit the enemy
+                                enemy.expos = Math.random() * (canvas.width - 50)
+                                bullets.splice(bullindex, 1)
                                 if (noscore) score++
                             }
                         }
                     })
-
                 });
                 // enemy hit logic end
                 // explosion draw logic start
@@ -739,7 +684,6 @@
                             enemy.eypos = -100
                     })
                 }
-
                 // enemy animation end 
                 // explosion function
                 function explo() {
@@ -770,76 +714,56 @@
                 // prize logic end
                 // boss dead logic start
                 function handleBossDeath(bossObj) {
-                    if (!bossObj.active) return; // EXIT IMMEDIATELY if already dead
-                    // 1. Create multiple random explosions over the boss area
-                    bossObj.active = false;
+                    if (!bossObj.active) return
+                    bossObj.active = false
                     let deathx = bossObj.x
                     let deathy = bossObj.y
                     for (let i = 0; i < 5; i++) {
                         bossexplosions.push({
                             id: blast,
-                            blastxpos: deathx + Math.random() * 250, // spread across boss width
-                            blastypos: deathy + Math.random() * 150, // spread across boss height
+                            blastxpos: deathx + Math.random() * 250,
+                            blastypos: deathy + Math.random() * 150,
                             speed: 0,
-                            timer: 40 + (i * 10) // staggered timing
+                            timer: 40 + (i * 10)
                         });
                     }
-
-
-                    bossObj.y = -500; // Move it far off-screen
-
-                    // 3. Clear the minions currently on screen
+                    bossObj.y = -500;
                     boss1enemies.length = 0;
-
-                    // 4. Bonus for winning
                     score += 50;
-
-
-
                 }
                 // boss death logic end     
-
                 // secondbossbullet fire logic start
                 function fireSemiCircle(boss) {
-
                     if (!boss.fireTimer) boss.fireTimer = 0;
                     boss.fireTimer++;
-
                     if (boss.fireTimer % 90 === 0) {
-                        const numBullets = 7; // Number of bullets in the arc
-                        const spread = Math.PI; // 180 degrees spread
+                        const numBullets = 7;
+                        const spread = Math.PI;
 
                         for (let i = 0; i < numBullets; i++) {
-                            // Calculate angle for each bullet: 
-                            // 0 is right, Math.PI/2 is down, Math.PI is left
                             let angle = (i * (spread / (numBullets - 1)));
-
                             secondboss.bullets.push({
-                                x: boss.x + 150, // Center of the 300px wide boss
+                                x: boss.x + 150,
                                 y: boss.y + 150,
-                                vx: Math.cos(angle) * 4, // Horizontal velocity
-                                vy: Math.sin(angle) * 4, // Vertical velocity
+                                vx: Math.cos(angle) * 4,
+                                vy: Math.sin(angle) * 4,
                                 size: 10
                             });
                         }
 
                     }
-
-                    // 2. Update and Draw those bullets
                     secondboss.bullets.forEach((b, index) => {
                         b.x += b.vx;
                         b.y += b.vy;
-
                         // Draw bullet
-                        ctx.fillStyle = "#FF00FF"; // Neon purple/pink for Boss 2
+                        ctx.fillStyle = "#FF00FF";
                         ctx.beginPath();
                         ctx.arc(b.x, b.y, b.size, 0, Math.PI * 2);
                         ctx.fill();
-
-                        // 3. Collision with Player (using your player variables)
                         if (b.x < pxpos + 50 && b.x + b.size > pxpos &&
                             b.y < pypos + 50 && b.y + b.size > pypos) {
                             if (isinvincible) {
+                                secondboss.bullets.splice(index, 1);
                                 return
                             }
                             if (!isinvincible) {
@@ -850,22 +774,14 @@
                                 secondboss.bullets.splice(index, 1);
                             }
                         }
-
-                        // 4. Remove bullets that leave the screen to prevent lag
                         if (b.y > canvas.height || b.x < 0 || b.x > canvas.width) {
                             secondboss.bullets.splice(index, 1);
                         }
-
                         return
-
                     });
-
                 }
                 // second boss bullet fire logic end
                 // boss1 logic end
-
-
-
                 // prize function
                 function dropEnemyPrize(enemy, weights, prizeList, pflag) {
                     explosions.push({ id: blast, blastxpos: enemy.expos, blastypos: enemy.eypos, speed: enemy.speed, timer: 30 })
@@ -911,8 +827,6 @@
                         bossTimer = maxBossTime; // Reset to 30 seconds
                         timerActive = true;
                     }
-
-                    // 2. The Countdown
                     if (timerActive) {
                         bossTimer--;
                         if (bossTimer <= 0) {
@@ -920,18 +834,13 @@
                             timerActive = false;
                         }
                     }
-
-                    // 3. Stop if Boss Dies
                     if (boss.health <= 0) {
                         timerActive = false;
                     }
-
                     drawBossUI(boss, 30)
                     boss.active = true;
-
                     // Move boss into view
                     if (boss.y < 50) boss.y += 1;
-
                     // Boss Side-to-Side movement
                     boss.x += boss.speedX;
                     if (boss.x > canvas.width - 300 || boss.x < 0) boss.speedX *= -1;
@@ -946,21 +855,18 @@
                                     boss1enemies.push(enemy)
                                     enemy.timer = Math.floor(Math.random() * 300) + 30 * firetimer
                                 }
-
                             }
                         })
-                        boss1enemies.forEach((enemy, enemyIndex) => {
-                            if (enemy.eypos > canvas.height || enemy.killcount <= 0) {
-                                boss1enemies.splice(enemyIndex, 1)
-                            }
-
-
-                            enemy.eypos += enemy.speed;
-                            enemyimg = enemy.id;
-
-
-                            ctx.drawImage(enemyimg, enemy.expos, enemy.eypos, 50, 50);
-                        });
+                        if (!thirdboss.active) {
+                            boss1enemies.forEach((enemy, enemyIndex) => {
+                                if (enemy.eypos > canvas.height || enemy.killcount <= 0) {
+                                    boss1enemies.splice(enemyIndex, 1)
+                                }
+                                enemy.eypos += enemy.speed;
+                                enemyimg = enemy.id;
+                                ctx.drawImage(enemyimg, enemy.expos, enemy.eypos, 50, 50);
+                            })
+                        }
                     }
                     ctx.drawImage(boss.img, boss.x, boss.y, 300, 200);
 
@@ -971,6 +877,7 @@
                             pypos < enemy.eypos + 50 &&
                             pypos + 50 > enemy.eypos) {
                             if (isinvincible) {
+                                boss1enemies.splice(enemyIndex, 1)
                                 return
                             }
                             if (!isinvincible) {
@@ -983,14 +890,9 @@
                                     isinvincible = false; // Reset invincibility after 3 seconds
                                 }, 3000)
                             }
-
                         }
-
                     })
-
                     //collision logic 
-
-
                     // enemy hit logic start
                     bullets.forEach((bull, bullindex) => {
                         if (bull.bxpos < boss.x + 300 &&
@@ -998,11 +900,9 @@
                             bull.bypos < boss.y + 100 &&
                             bull.bypos + 25 > boss.y
                         ) {
-
                             bossexplosions.push({ id: blast, blastxpos: bull.bxpos, blastypos: bull.bypos, speed: 1, timer: 3 })
                             bullets.splice(bullindex, 1)
                             boss.health = boss.health - firepowercount - 1
-
                         }
                         boss1enemies.forEach((enemy, enemyIndex) => {
 
@@ -1017,9 +917,7 @@
                                     bossexplo()
                                 }
                             }
-
                         })
-
                     });
                     // TRIGGER DEATH ANIMATION
                     if (boss.health <= 0) {
@@ -1056,8 +954,8 @@
 
                         if (distance > 1) {
 
-                            m.expos += (dx / distance) * 3;
-                            m.eypos += (dy / distance) * 3;
+                            m.expos += (dx / distance) * 5;
+                            m.eypos += (dy / distance) * 5;
                         }
 
 
@@ -1096,8 +994,6 @@
                     })
 
                     //collision logic 
-
-
                     // enemy hit logic start
                     bullets.forEach((bull, bullindex) => {
 
@@ -1125,10 +1021,10 @@
                     for (let i = 0; i < 2; i++) {
                         bossexplosions.push({
                             id: blast,
-                            blastxpos: hitboss.x + Math.random() * 250, // spread across boss width
-                            blastypos: hitboss.y + Math.random() * 150, // spread across boss height
+                            blastxpos: hitboss.x + Math.random() * 250,
+                            blastypos: hitboss.y + Math.random() * 150,
                             speed: 0,
-                            timer: 40 + (i * 10) // staggered timing
+                            timer: 40 + (i * 10)
                         });
                     }
                     // TRIGGER DEATH ANIMATION
@@ -1141,24 +1037,20 @@
                 function displayEndScreen(message, color) {
                     // Darken the background
                     ctx.fillStyle = "rgba(0, 0, 0, 0.75)";
-                    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-                    // Main Text
+                    ctx.fillRect(0, 0, canvas.width, canvas.height)
                     ctx.fillStyle = color;
                     ctx.font = "bold 70px 'Orbitron', sans-serif";
                     ctx.textAlign = "center";
                     ctx.shadowBlur = 20;
                     ctx.shadowColor = color;
                     ctx.fillText(message, canvas.width / 2, canvas.height / 2);
-
-                    // Sub-text
                     ctx.shadowBlur = 0;
                     ctx.fillStyle = "white";
                     ctx.font = "20px 'Orbitron', sans-serif";
                     ctx.fillText("FINAL SCORE: " + score, canvas.width / 2, canvas.height / 2 + 60);
                     ctx.fillText("PRESS F5 TO RESTART", canvas.width / 2, canvas.height / 2 + 100);
 
-                    ctx.textAlign = "start"; // Reset for future frames
+
                 }
                 function drawBossUI(boss, maxHealth) {
                     const barWidth = 400;
@@ -1195,8 +1087,6 @@
                     ctx.fillText(currentPhase + " HP", canvas.width / 2, y - 10);
                     ctx.textAlign = "start";
                 }
-
-
                 function triggerWarning(text) {
                     warningTimer = 120; // Show for (approx 2 seconds)
                     ctx.fillStyle = "cyan";
@@ -1246,7 +1136,7 @@
                     ctx.fillText(`Note:Rockets have been set to infinite for checkers to complete game easily`, canvas.width / 2, canvas.height / 2 + 300);
 
 
-                    // Start with Key Press
+
                     window.addEventListener("keydown", function (e) {
                         if (e.key.toLowerCase() === "s") {
                             if (!isStarted) {
@@ -1255,7 +1145,7 @@
                         }
                     });
 
-                    // Start with Mouse Click
+
                     canvas.addEventListener("mousedown", function () {
                         if (!isStarted) {
                             isStarted = true
@@ -1271,7 +1161,6 @@
                         if (!isinvincible) {
                             lifecount--;
                             isinvincible = true;
-                            // Create a big explosion at player position
                             explosions.push({ id: blast, blastxpos: pxpos, blastypos: pypos, speed: 0, timer: 30 });
 
                             setTimeout(() => {
@@ -1281,10 +1170,7 @@
                     }
                 }
                 requestAnimationFrame(animate)
-
             }
-
-
             animate();
         });
     </script>
