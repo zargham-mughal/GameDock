@@ -465,7 +465,6 @@
                             return
                         }
                         if (!isinvincible) {
-                            // Remove one life
                             lifecount--
                             explosions.push({ id: blast, blastxpos: enemy.expos, blastypos: enemy.eypos, speed: enemy.speed, timer: 30 })
                             ctx.clearRect(enemy.expos, enemy.eypos, 50, 50)
@@ -473,7 +472,7 @@
                             enemy.expos = Math.random() * (canvas.width - 50)
                             isinvincible = true
                             setTimeout(() => {
-                                isinvincible = false // Reset invincibility after 3 seconds
+                                isinvincible = false
                             }, 3000)
                         }
                     }
@@ -594,17 +593,16 @@
                 // rocket logic end
                 // fire logic start
                 function fireBullet() {
-                    // Create a bullet object and add it to an array of bullets
-                    let bulletobject = { id: bullet, bxpos: pxpos, bypos: pypos - 25, speed: bulletSpeed } // Start bullet at player's position}
+                    let bulletobject = { id: bullet, bxpos: pxpos, bypos: pypos - 25, speed: bulletSpeed }
                     bullets.push(bulletobject)
                 }
-                if (keys.Spacebar) { // Spacebar to fire
+                if (keys.Spacebar) {
                     fireBullet()
                     keys.Spacebar = false
                 }
                 bullets.forEach(bull => {
-                    bull.bypos -= bull.speed// Move the bullet upwards
-                    ctx.drawImage(bull.id, bull.bxpos + 20, bull.bypos, 20, 30) // Draw the bullet immediately when fired
+                    bull.bypos -= bull.speed
+                    ctx.drawImage(bull.id, bull.bxpos + 20, bull.bypos, 20, 30)
                     if (bull.bypos < 0)
                         bullets.shift()
                 })
@@ -795,7 +793,7 @@
                     // prize function end
                     if (pflag) {
                         enemy.eypos = -enemy.eypos - 10
-                        enemy.expos = Math.random() * (canvas.width - 50) // Respawn the enemy at a new random position
+                        enemy.expos = Math.random() * (canvas.width - 50)
 
                     }
                     enemy.killcount = 4
@@ -807,7 +805,7 @@
                     }
 
                     if (!timerActive && boss.health > 0) {
-                        bossTimer = maxBossTime // Reset to 30 seconds
+                        bossTimer = maxBossTime
                         timerActive = true
                     }
                     if (timerActive) {
@@ -857,8 +855,7 @@
                         if (bull.bxpos < boss.x + 400 &&
                             bull.bxpos + 30 > boss.x &&
                             bull.bypos < boss.y + 150 &&
-                            bull.bypos + 25 > boss.y
-                        ) {
+                            bull.bypos + 25 > boss.y) {
                             bossexplosions.push({ id: blast, blastxpos: bull.bxpos, blastypos: bull.bypos, speed: 1, timer: 3 })
                             bullets.splice(bullindex, 1)
                             boss.health = boss.health - firepowercount - 1
@@ -877,12 +874,11 @@
                                     return
                                 }
                                 if (!isinvincible) {
-                                    // Remove one life
                                     lifecount--
                                     explosions.push({ id: blast, blastxpos: enemy.expos, blastypos: enemy.eypos, speed: enemy.speed, timer: 30 })
-                                    isinvincible = true // Set invincibility to prevent multiple collisions in a short time
+                                    isinvincible = true
                                     setTimeout(() => {
-                                        isinvincible = false // Reset invincibility after 3 seconds
+                                        isinvincible = false
                                     }, 3000)
                                 }
                             }
@@ -894,10 +890,9 @@
                                 if (bull.bxpos < enemy.expos + 25 &&
                                     bull.bxpos + 25 > enemy.expos &&
                                     bull.bypos < enemy.eypos + 25 &&
-                                    bull.bypos + 25 > enemy.eypos
-                                ) {
+                                    bull.bypos + 25 > enemy.eypos) {
                                     enemy.killcount = enemy.killcount - firepowercount - 1
-                                    bullets.splice(bullindex, 1) // Remove the bullet that hit the enemy
+                                    bullets.splice(bullindex, 1)
                                     if (enemy.killcount <= 0) {
                                         dropEnemyPrize(enemy, weights, prize, false)
                                         boss1enemies.splice(enemyIndex, 1)
@@ -906,7 +901,6 @@
                             })
                         })
                     }
-                    // TRIGGER DEATH ANIMATION
                     if (boss.health <= 0) {
                         handleBossDeath(boss)
                     }
@@ -954,12 +948,11 @@
                                 boss2enemies.splice(enemyIndex, 1)
                             }
                             if (!isinvincible) {
-                                // Remove one life
                                 lifecount--
                                 explosions.push({ id: blast, blastxpos: enemy.expos, blastypos: enemy.eypos, speed: enemy.speed, timer: 30 })
-                                isinvincible = true // Set invincibility to prevent multiple collisions in a short time
+                                isinvincible = true
                                 setTimeout(() => {
-                                    isinvincible = false // Reset invincibility after 3 seconds
+                                    isinvincible = false
                                 }, 3000)
                             }
                         }
@@ -995,7 +988,6 @@
                             timer: 40 + (i * 10)
                         })
                     }
-                    // TRIGGER DEATH ANIMATION
                     if (hitboss.health <= 0) {
                         handleBossDeath(hitboss)
 
@@ -1003,7 +995,6 @@
                     return
                 }
                 function displayEndScreen(message, color) {
-                    // Darken the background
                     ctx.fillStyle = "rgba(0, 0, 0, 0.75)"
                     ctx.fillRect(0, 0, canvas.width, canvas.height)
                     ctx.fillStyle = color
@@ -1017,8 +1008,6 @@
                     ctx.font = "40px 'Orbitron', sans-serif"
                     ctx.fillText("FINAL SCORE: " + score, canvas.width / 2, canvas.height / 2 + 60)
                     ctx.fillText("PRESS F5 TO RESTART", canvas.width / 2, canvas.height / 2 + 100)
-
-
                 }
                 function drawBossUI(boss, maxHealth) {
                     const barWidth = 400
@@ -1040,11 +1029,9 @@
                     // --- TIMER DISPLAY ---
                     if (timerActive) {
                         let secondsLeft = Math.ceil(bossTimer / 60)
-                        ctx.fillStyle = secondsLeft <= 10 ? "#ff4d4d" : "white" // Turn red at 10s
+                        ctx.fillStyle = secondsLeft <= 10 ? "#ff4d4d" : "white"
                         ctx.font = "bold 24px 'Orbitron', sans-serif"
                         ctx.textAlign = "left"
-
-                        // Positioned to the right of the health bar
                         ctx.fillText("⏳ " + secondsLeft + "s", x + barWidth + 20, y + 18)
                     }
 
@@ -1056,7 +1043,7 @@
                     ctx.textAlign = "start"
                 }
                 function triggerWarning(text) {
-                    warningTimer = 120 // Show for (approx 2 seconds)
+                    warningTimer = 120
                     ctx.fillStyle = "cyan"
                     ctx.font = "bold 70px 'Orbitron', sans-serif"
                     ctx.textAlign = "center"
@@ -1102,8 +1089,6 @@
                     ctx.fillText(".Power ups: Scavenge through power ups left behind by enemies.", canvas.width / 2, canvas.height / 2 + 250)
                     ctx.fillStyle = "#2323FF"
                     ctx.fillText("Note: Rockets have been set to infinite for checkers to complete game easily.", canvas.width / 2, canvas.height / 2 + 300)
-
-
 
                     window.addEventListener("keydown", function (e) {
                         if (e.key.toLowerCase() === "s") {
