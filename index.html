@@ -46,11 +46,10 @@
     }
 
     #gameCanvas {
-        width: 100%;
-        height: 100%;
-        /* max-width: 100%;
-        max-height: 100%; */
-        /* object-fit: contain; */
+
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
         border: 2px solid cyan;
         box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
         background: #000;
@@ -85,87 +84,87 @@
             }
             // images objects
             const jetImg = new Image();
-            jetImg.src = "jet.webp"
+            jetImg.src = "assets/jet.webp";
             const thufo1 = new Image();
-            thufo1.src = "thufo1.webp"
+            thufo1.src = "assets/thufo1.webp";
             const thufo2 = new Image();
-            thufo2.src = "thufo2.webp"
+            thufo2.src = "assets/thufo2.webp";
             const thufo3 = new Image();
-            thufo3.src = "thufo3.webp"
+            thufo3.src = "assets/thufo3.webp";
             const thufo4 = new Image();
-            thufo4.src = "thufo4.webp"
+            thufo4.src = "assets/thufo4.webp";
             const thufo5 = new Image();
-            thufo5.src = "thufo5.webp"
+            thufo5.src = "assets/thufo5.webp";
             const thufo6 = new Image();
-            thufo6.src = "thufo6.webp"
+            thufo6.src = "assets/thufo6.webp";
             const thufo7 = new Image();
-            thufo7.src = "thufo7.webp"
+            thufo7.src = "assets/thufo7.webp";
             const thufo8 = new Image();
-            thufo8.src = "thufo8.webp"
+            thufo8.src = "assets/thufo8.webp";
             const thufo9 = new Image();
-            thufo9.src = "thufo9.webp"
+            thufo9.src = "assets/thufo9.webp";
             const thufo10 = new Image();
-            thufo10.src = "thufo10.webp"
+            thufo10.src = "assets/thufo10.webp";
             const ufo1 = new Image();
-            ufo1.src = "ufo1.webp"
+            ufo1.src = "assets/ufo1.webp";
             const ufo2 = new Image();
-            ufo2.src = "ufo2.webp"
+            ufo2.src = "assets/ufo2.webp";
             const ufo3 = new Image();
-            ufo3.src = "ufo3.webp"
+            ufo3.src = "assets/ufo3.webp";
             const ufo4 = new Image();
-            ufo4.src = "ufo4.webp"
+            ufo4.src = "assets/ufo4.webp";
             const ufo5 = new Image();
-            ufo5.src = "ufo5.webp"
+            ufo5.src = "assets/ufo5.webp";
             const ufo6 = new Image();
-            ufo6.src = "ufo6.webp"
+            ufo6.src = "assets/ufo6.webp";
             const ufo7 = new Image();
-            ufo7.src = "ufo7.webp"
+            ufo7.src = "assets/ufo7.webp";
             const ufo8 = new Image();
-            ufo8.src = "ufo8.webp"
+            ufo8.src = "assets/ufo8.webp";
             const ufo9 = new Image();
-            ufo9.src = "ufo9.webp"
+            ufo9.src = "assets/ufo9.webp";
             const ufo10 = new Image();
-            ufo10.src = "ufo10.webp"
+            ufo10.src = "assets/ufo10.webp";
             const ufo11 = new Image();
-            ufo11.src = "ufo11.webp"
+            ufo11.src = "assets/ufo11.webp";
             const ufo12 = new Image();
-            ufo12.src = "ufo12.webp"
+            ufo12.src = "assets/ufo12.webp";
             const life = new Image();
-            life.src = "life.webp"
+            life.src = "assets/life.webp";
             const bullet = new Image();
-            bullet.src = "bullet.webp"
+            bullet.src = "assets/bullet.webp";
             const boss1 = new Image();
-            boss1.src = "boss1.webp"
+            boss1.src = "assets/boss1.webp";
             const boss2 = new Image();
-            boss2.src = "boss2.webp"
+            boss2.src = "assets/boss2.webp";
             const boss3 = new Image();
-            boss3.src = "boss3.webp"
+            boss3.src = "assets/boss3.webp";
             const ten1right = new Image();
-            ten1right.src = "ten1right.webp"
+            ten1right.src = "assets/ten1right.webp";
             const ten1left = new Image();
-            ten1left.src = "ten1left.webp"
+            ten1left.src = "assets/ten1left.webp";
             const ten2right = new Image();
-            ten2right.src = "ten2right.webp"
+            ten2right.src = "assets/ten2right.webp";
             const ten2left = new Image();
-            ten2left.src = "ten2left.webp"
+            ten2left.src = "assets/ten2left.webp";
             const firepower = new Image();
-            firepower.src = "firepower.webp"
+            firepower.src = "assets/firepower.webp";
             const rocket = new Image();
-            rocket.src = "rocket (leftcornerup).webp"
+            rocket.src = "assets/rocket (leftcornerup).webp";
             const rocket1 = new Image();
-            rocket1.src = "rocket (rightcornerup).webp"
+            rocket1.src = "assets/rocket (rightcornerup).webp";
             const rocket2 = new Image();
-            rocket2.src = "rocket (rightcornerdown).webp"
+            rocket2.src = "assets/rocket (rightcornerdown).webp";
             const rocket3 = new Image();
-            rocket3.src = "rocket (leftcornerdown).webp"
+            rocket3.src = "assets/rocket (leftcornerdown).webp";
             const meteor = new Image();
-            meteor.src = "meteor.webp"
+            meteor.src = "assets/meteor.webp";
             const coin = new Image();
-            coin.src = "coin.webp"
+            coin.src = "assets/coin.webp";
             const gear = new Image();
-            gear.src = "gear.webp"
+            gear.src = "assets/gear.webp";
             const blast = new Image();
-            blast.src = "blast.webp"
+            blast.src = "assets/blast.webp";
             let inc = 0
             let rxpos
             let rypos
@@ -341,7 +340,7 @@
                 if (isinvincible) {
                     ctx.strokeStyle = "#39FF14"
                     ctx.beginPath()
-                    ctx.arc(pxpos + 25, pypos + 25, 50, 0, Math.PI * 2);
+                    ctx.arc(pxpos + 45, pypos + 50, 60, 0, Math.PI * 2);
                     ctx.stroke()
                 }
 
