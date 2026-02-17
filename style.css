@@ -1,0 +1,118 @@
+body {
+    background: radial-gradient(circle, #1a1a2e 0%, #050505 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    overflow: hidden;
+    font-family: sans-serif;
+    color: #fff;
+    flex-direction: column;
+}
+
+.game-wrapper {
+    position: relative;
+    /* width: 100%; */
+    height: 80vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+#rotate-device {
+    font-size: 40px;
+    /* Big Text */
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+
+
+#gameCanvas {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border: 2px solid cyan;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+    background: #000;
+}
+
+#mobile-controls {
+    display: none;
+    /* Default hidden */
+    position: fixed;
+    bottom: 20px;
+    width: 100%;
+    justify-content: space-between;
+    padding: 0 20px;
+    box-sizing: border-box;
+    z-index: 100;
+}
+
+.d-pad,
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.d-pad-horizontal {
+    display: flex;
+}
+
+#mobile-controls button {
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid cyan;
+    color: white;
+    border-radius: 50%;
+    margin: 5px;
+    font-size: 24px;
+    touch-action: manipulation;
+}
+
+/* --- Media Queries --- */
+
+
+/* Small Laptops & Large Tablets */
+
+@media (max-width: 1024px) {
+    .game-container {
+        width: 98vw;
+        border-width: 1px;
+    }
+
+    #mobile-controls {
+        display: flex;
+    }
+}
+
+
+/* Mobile  */
+
+@media (max-height: 500px) and (orientation: landscape) {
+    .game-container {
+        height: 95vh;
+        width: auto;
+        aspect-ratio: 16 / 9;
+    }
+}
+
+@media (orientation: portrait) {
+    #rotate-device {
+        display: flex;
+    }
+}
