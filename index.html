@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Game Dock</title>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=3">
     <script src="script.js"></script>
 </head>
 
@@ -17,19 +17,20 @@
         <canvas id="gameCanvas" width="1920" height="1080" style="border:2px solid white; background: #000;"></canvas>
     </div>
     <div id="mobile-controls">
-        <div class="d-pad">
-            <button id="up-btn">↑</button>
-            <div class="d-pad-horizontal">
-                <button id="left-btn">←</button>
-                <button id="right-btn">→</button>
-            </div>
-            <button id="down-btn">↓</button>
+        <div class="direction-pad">
+            <button id="up-btn">▲</button>
+            <button id="left-btn">◀</button>
+            <button id="right-btn">▶</button>
+            <button id="down-btn">▼</button>
         </div>
+
         <div class="action-buttons">
+            <button id="restart-btn">🔄</button>
             <button id="fire-btn">🔥</button>
             <button id="rocket-btn">🚀</button>
         </div>
     </div>
+
     <div id="rotate-device">
         <p>Please rotate your device to landscape mode 🔄</p>
     </div>

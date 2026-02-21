@@ -1,4 +1,4 @@
-$(document).ready(function () {
+$(document).ready(function() {
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
     let pxpos = ((canvas.width) / 2) - 25,
@@ -199,7 +199,7 @@ $(document).ready(function () {
     let firetimer = 1
     let isGameOver = false
     let isVictory = false
-    //  boss
+        //  boss
     let firstboss = {
         img: boss1,
         x: 400,
@@ -275,76 +275,76 @@ $(document).ready(function () {
     }
     let firetimerth = 0.5
     let boss2enemiesarr = [{
-        id: thufo1,
-        expos: thirdboss.x,
-        eypos: thirdboss.y,
-        speed: 3,
-        timer: Math.floor(Math.random() * 300) + 30 * firetimerth,
-        killcount: 4
-    }, {
-        id: thufo2,
-        expos: thirdboss.x,
-        eypos: thirdboss.y,
-        speed: 3,
-        timer: Math.floor(Math.random() * 300) + 30 * firetimerth,
-        killcount: 4
-    }, {
-        id: thufo3,
-        expos: thirdboss.x,
-        eypos: thirdboss.y,
-        speed: 3,
-        timer: Math.floor(Math.random() * 300) + 30 * firetimerth,
-        killcount: 4
-    }, {
-        id: thufo4,
-        expos: thirdboss.x,
-        eypos: thirdboss.y,
-        speed: 3,
-        timer: Math.floor(Math.random() * 300) + 30 * firetimerth,
-        killcount: 4
-    }, {
-        id: thufo5,
-        expos: thirdboss.x,
-        eypos: thirdboss.y,
-        speed: 3,
-        timer: Math.floor(Math.random() * 300) + 30 * firetimerth,
-        killcount: 4
-    }, {
-        id: thufo6,
-        expos: thirdboss.x,
-        eypos: thirdboss.y,
-        speed: 3,
-        timer: Math.floor(Math.random() * 300) + 30 * firetimerth,
-        killcount: 4
-    }, {
-        id: thufo7,
-        expos: thirdboss.x,
-        eypos: thirdboss.y,
-        speed: 3,
-        timer: Math.floor(Math.random() * 300) + 30 * firetimerth,
-        killcount: 4
-    }, {
-        id: thufo8,
-        expos: thirdboss.x,
-        eypos: thirdboss.y,
-        speed: 3,
-        timer: Math.floor(Math.random() * 300) + 30 * firetimerth,
-        killcount: 4
-    }, {
-        id: thufo9,
-        expos: thirdboss.x,
-        eypos: thirdboss.y,
-        speed: 3,
-        timer: Math.floor(Math.random() * 300) + 30 * firetimerth,
-        killcount: 4
-    }, {
-        id: thufo10,
-        expos: thirdboss.x,
-        eypos: thirdboss.y,
-        speed: 3,
-        timer: Math.floor(Math.random() * 300) + 30 * firetimerth,
-        killcount: 4
-    },
+            id: thufo1,
+            expos: thirdboss.x,
+            eypos: thirdboss.y,
+            speed: 3,
+            timer: Math.floor(Math.random() * 300) + 30 * firetimerth,
+            killcount: 4
+        }, {
+            id: thufo2,
+            expos: thirdboss.x,
+            eypos: thirdboss.y,
+            speed: 3,
+            timer: Math.floor(Math.random() * 300) + 30 * firetimerth,
+            killcount: 4
+        }, {
+            id: thufo3,
+            expos: thirdboss.x,
+            eypos: thirdboss.y,
+            speed: 3,
+            timer: Math.floor(Math.random() * 300) + 30 * firetimerth,
+            killcount: 4
+        }, {
+            id: thufo4,
+            expos: thirdboss.x,
+            eypos: thirdboss.y,
+            speed: 3,
+            timer: Math.floor(Math.random() * 300) + 30 * firetimerth,
+            killcount: 4
+        }, {
+            id: thufo5,
+            expos: thirdboss.x,
+            eypos: thirdboss.y,
+            speed: 3,
+            timer: Math.floor(Math.random() * 300) + 30 * firetimerth,
+            killcount: 4
+        }, {
+            id: thufo6,
+            expos: thirdboss.x,
+            eypos: thirdboss.y,
+            speed: 3,
+            timer: Math.floor(Math.random() * 300) + 30 * firetimerth,
+            killcount: 4
+        }, {
+            id: thufo7,
+            expos: thirdboss.x,
+            eypos: thirdboss.y,
+            speed: 3,
+            timer: Math.floor(Math.random() * 300) + 30 * firetimerth,
+            killcount: 4
+        }, {
+            id: thufo8,
+            expos: thirdboss.x,
+            eypos: thirdboss.y,
+            speed: 3,
+            timer: Math.floor(Math.random() * 300) + 30 * firetimerth,
+            killcount: 4
+        }, {
+            id: thufo9,
+            expos: thirdboss.x,
+            eypos: thirdboss.y,
+            speed: 3,
+            timer: Math.floor(Math.random() * 300) + 30 * firetimerth,
+            killcount: 4
+        }, {
+            id: thufo10,
+            expos: thirdboss.x,
+            eypos: thirdboss.y,
+            speed: 3,
+            timer: Math.floor(Math.random() * 300) + 30 * firetimerth,
+            killcount: 4
+        },
 
     ]
     let boss3enemiesarr = [{
@@ -445,7 +445,7 @@ $(document).ready(function () {
         Enter: false
     }
     let enemyspawnflag = false
-    $(window).on('keydown', function (e) {
+    $(window).on('keydown', function(e) {
         if (e.key == "ArrowRight") keys.ArrowRight = true
         if (e.key == "ArrowLeft") keys.ArrowLeft = true
         if (e.key == "ArrowUp") keys.ArrowUp = true
@@ -453,7 +453,7 @@ $(document).ready(function () {
         if (e.key == "Enter") keys.Enter = true
         if (e.key == " ") keys.Spacebar = true
     })
-    $(window).on('keyup', function (e) {
+    $(window).on('keyup', function(e) {
         if (e.key == "ArrowRight") keys.ArrowRight = false
         if (e.key == "ArrowLeft") keys.ArrowLeft = false
         if (e.key == "ArrowUp") keys.ArrowUp = false
@@ -462,11 +462,11 @@ $(document).ready(function () {
         if (e.key == " ") keys.Spacebar = false
     })
     let test = true
-    // Main Game Loop
+        // Main Game Loop
 
     function animate() {
         ctx.clearRect(0, 0, canvas.width, canvas.height)
-        // player animations start
+            // player animations start
         if (keys.ArrowLeft) pxpos -= playerspeed
         if (keys.ArrowUp) pypos -= playerspeed
         if (keys.ArrowDown) pypos += playerspeed
@@ -479,13 +479,13 @@ $(document).ready(function () {
         pypos -= playerspeed
         if (keys.ArrowRight && keys.ArrowDown) pxpos += playerspeed;
         pypos += playerspeed
-        // Keep player inside X boundaries
+            // Keep player inside X boundaries
         if (pxpos < 0) pxpos = 0
         if (pxpos > canvas.width - 50) pxpos = canvas.width - 50
-        // Keep player inside Y boundaries
+            // Keep player inside Y boundaries
         if (pypos < 0) pypos = 0
         if (pypos > canvas.height - 90) pypos = canvas.height - 90
-        // Draw Player
+            // Draw Player
         if (jetImg.complete) {
             ctx.drawImage(jetImg, pxpos, pypos, 90, 90)
         }
@@ -627,66 +627,66 @@ $(document).ready(function () {
         }
         //  Collision logic start
         enemies.forEach(enemy => {
-            if (pxpos < enemy.expos + 50 &&
-                pxpos + 50 > enemy.expos &&
-                pypos < enemy.eypos + 50 &&
-                pypos + 50 > enemy.eypos) {
-                if (isinvincible) {
-                    return
+                if (pxpos < enemy.expos + 50 &&
+                    pxpos + 50 > enemy.expos &&
+                    pypos < enemy.eypos + 50 &&
+                    pypos + 50 > enemy.eypos) {
+                    if (isinvincible) {
+                        return
+                    }
+                    if (!isinvincible) {
+                        lifecount--
+                        explosions.push({
+                            id: blast,
+                            blastxpos: enemy.expos,
+                            blastypos: enemy.eypos,
+                            speed: enemy.speed,
+                            timer: 30
+                        })
+                        ctx.clearRect(enemy.expos, enemy.eypos, 50, 50)
+                        enemy.eypos = -enemy.eypos - 10
+                        enemy.expos = Math.random() * (canvas.width - 50)
+                        isinvincible = true
+                        setTimeout(() => {
+                            isinvincible = false
+                        }, 3000)
+                    }
                 }
-                if (!isinvincible) {
-                    lifecount--
-                    explosions.push({
-                        id: blast,
-                        blastxpos: enemy.expos,
-                        blastypos: enemy.eypos,
-                        speed: enemy.speed,
-                        timer: 30
-                    })
-                    ctx.clearRect(enemy.expos, enemy.eypos, 50, 50)
-                    enemy.eypos = -enemy.eypos - 10
-                    enemy.expos = Math.random() * (canvas.width - 50)
-                    isinvincible = true
-                    setTimeout(() => {
-                        isinvincible = false
-                    }, 3000)
-                }
-            }
-        })
-        //collision logic end
-        //  score logic start
+            })
+            //collision logic end
+            //  score logic start
         ctx.fillStyle = "white"
         ctx.font = "40px Arial"
         ctx.textAlign = "left"
         ctx.textBaseline = "bottom"
         ctx.fillText("Score: " + score, canvas.width - 220, canvas.height - 20)
-        //  score logic end
-        // Lives logic start     
+            //  score logic end
+            // Lives logic start     
         ctx.drawImage(life, 20, 20, 60, 60)
         ctx.fillStyle = "white"
         ctx.font = "40px Arial"
         ctx.fillText(lifecount, 90, 70)
-        //  lives logic end
-        // firepower logic start
+            //  lives logic end
+            // firepower logic start
         ctx.drawImage(firepower, canvas.width - 110, 20, 60, 60)
         ctx.fillStyle = "white"
         ctx.font = "40px Arial"
         firepowercount = firepowerinc
         ctx.fillText(firepowercount, canvas.width - 40, 70)
-        //  firepower logic end
-        // rocket logic start
+            //  firepower logic end
+            // rocket logic start
         ctx.drawImage(rocket, canvas.width - 220, 20, 60, 60)
         ctx.fillStyle = "white"
         ctx.font = "40px Arial"
         rocketcount = rocketcountinc
         ctx.fillText(rocketcount, canvas.width - 140, 70)
-        // boss explosion logic start
+            // boss explosion logic start
         bossexplosions.forEach((bossexplosion, bossexplosionindex) => {
             ctx.drawImage(bossexplosion.id, bossexplosion.blastxpos, bossexplosion.blastypos, 100, 100)
             bossexplosion.timer--
-            if (bossexplosion.timer <= 0) {
-                bossexplosions.splice(bossexplosionindex, 1)
-            }
+                if (bossexplosion.timer <= 0) {
+                    bossexplosions.splice(bossexplosionindex, 1)
+                }
         })
 
         if (firstboss.active) bosslife = firstboss
@@ -773,14 +773,14 @@ $(document).ready(function () {
         // rocket fire logic end
         // rocket hit logic start
         firedrockets.forEach((firedrocket, firedrocketindex) => {
-            ctx.drawImage(firedrocket.id, firedrocket.rbxpos, firedrocket.rbypos, 200, 200)
-            firedrocket.timer--
-            if (firedrocket.timer <= 0) {
-                firedrockets.splice(firedrocketindex, 1)
+                ctx.drawImage(firedrocket.id, firedrocket.rbxpos, firedrocket.rbypos, 200, 200)
+                firedrocket.timer--
+                    if (firedrocket.timer <= 0) {
+                        firedrockets.splice(firedrocketindex, 1)
 
-            }
-        })
-        // player collision with boss
+                    }
+            })
+            // player collision with boss
         if (killedenemies >= 10 && firstboss.health > 0) {
             checkBossCollision(firstboss, 300, 200)
         } else if (killedenemies >= 81 && secondboss.health > 0) {
@@ -805,66 +805,66 @@ $(document).ready(function () {
             keys.Spacebar = false
         }
         bullets.forEach(bull => {
-            bull.bypos -= bull.speed
-            ctx.drawImage(bull.id, bull.bxpos + 20, bull.bypos, 20, 30)
-            if (bull.bypos < 0)
-                bullets.shift()
-        })
-        // fire logic 
-        // enemy hit logic start
+                bull.bypos -= bull.speed
+                ctx.drawImage(bull.id, bull.bxpos + 20, bull.bypos, 20, 30)
+                if (bull.bypos < 0)
+                    bullets.shift()
+            })
+            // fire logic 
+            // enemy hit logic start
         bullets.forEach((bull, bullindex) => {
-            enemies.forEach((enemy, enemyIndex) => {
-                if (bull.bxpos < enemy.expos + 25 &&
-                    bull.bxpos + 25 > enemy.expos &&
-                    bull.bypos < enemy.eypos + 25 &&
-                    bull.bypos + 25 > enemy.eypos
-                ) {
-                    enemy.killcount = enemy.killcount - firepowercount - 1
-                    bullets.splice(bullindex, 1)
-                    if (enemy.killcount <= 0) {
-                        dropEnemyPrize(enemy, weights, prize)
-                        enemy.eypos = -enemy.eypos - 10
-                        enemy.killcount = 4
-                        enemy.expos = Math.random() * (canvas.width - 50)
+                enemies.forEach((enemy, enemyIndex) => {
+                    if (bull.bxpos < enemy.expos + 25 &&
+                        bull.bxpos + 25 > enemy.expos &&
+                        bull.bypos < enemy.eypos + 25 &&
+                        bull.bypos + 25 > enemy.eypos
+                    ) {
+                        enemy.killcount = enemy.killcount - firepowercount - 1
                         bullets.splice(bullindex, 1)
-                        score++
-                        killedenemies++
+                        if (enemy.killcount <= 0) {
+                            dropEnemyPrize(enemy, weights, prize)
+                            enemy.eypos = -enemy.eypos - 10
+                            enemy.killcount = 4
+                            enemy.expos = Math.random() * (canvas.width - 50)
+                            bullets.splice(bullindex, 1)
+                            score++
+                            killedenemies++
+                        }
                     }
+                })
+            })
+            // enemy hit logic end
+            // explosion draw logic start
+        explosions.forEach((explosion, explosionindex) => {
+                ctx.drawImage(explosion.id, explosion.blastxpos, explosion.blastypos, 60, 60)
+                explosion.timer--
+                    if (explosion.timer <= 0) {
+                        explosions.splice(explosionindex, 1)
+                    }
+            })
+            // explosion draw logic end
+            // prize logic start
+        prize.forEach((prizeitem, prizeindex) => {
+                ctx.drawImage(prizeitem.id, prizeitem.lxpos, prizeitem.lypos, 50, 50)
+                prizeitem.lypos += prizeitem.lspeed
+                if (prizeitem.lypos > canvas.height) prize.splice(prizeindex, 1)
+                if (prizeitem.lxpos < pxpos + 50 &&
+                    prizeitem.lxpos + 50 > pxpos &&
+                    prizeitem.lypos < pypos + 50 &&
+                    prizeitem.lypos + 50 > pypos) {
+                    if (prizeitem.type == "life") {
+                        lifecount++
+                    } else if (prizeitem.type == "firepower") {
+                        firepowerinc++
+                    } else if (prizeitem.type == "score") {
+                        score++
+                    } else if (prizeitem.type == "gear") {
+                        rocketcountinc++
+                    }
+                    prize.splice(prizeindex, 1)
                 }
             })
-        })
-        // enemy hit logic end
-        // explosion draw logic start
-        explosions.forEach((explosion, explosionindex) => {
-            ctx.drawImage(explosion.id, explosion.blastxpos, explosion.blastypos, 60, 60)
-            explosion.timer--
-            if (explosion.timer <= 0) {
-                explosions.splice(explosionindex, 1)
-            }
-        })
-        // explosion draw logic end
-        // prize logic start
-        prize.forEach((prizeitem, prizeindex) => {
-            ctx.drawImage(prizeitem.id, prizeitem.lxpos, prizeitem.lypos, 50, 50)
-            prizeitem.lypos += prizeitem.lspeed
-            if (prizeitem.lypos > canvas.height) prize.splice(prizeindex, 1)
-            if (prizeitem.lxpos < pxpos + 50 &&
-                prizeitem.lxpos + 50 > pxpos &&
-                prizeitem.lypos < pypos + 50 &&
-                prizeitem.lypos + 50 > pypos) {
-                if (prizeitem.type == "life") {
-                    lifecount++
-                } else if (prizeitem.type == "firepower") {
-                    firepowerinc++
-                } else if (prizeitem.type == "score") {
-                    score++
-                } else if (prizeitem.type == "gear") {
-                    rocketcountinc++
-                }
-                prize.splice(prizeindex, 1)
-            }
-        })
-        // enemy animation start
+            // enemy animation start
         if (!enemyspawnflag) {
             enemies.forEach((enemy, enemyindex) => {
                 if (enemy.eypos < canvas.height)
@@ -919,24 +919,24 @@ $(document).ready(function () {
         function fireSemiCircle(boss) {
             if (!boss.fireTimer) boss.fireTimer = 0
             boss.fireTimer++
-            if (boss.fireTimer % 90 === 0) {
-                const numBullets = 7
-                const spread = Math.PI
-                for (let i = 0; i < numBullets; i++) {
-                    let angle = (i * (spread / (numBullets - 1)))
-                    boss.bullets.push({
-                        x: boss.x + 280,
-                        y: boss.y + 150,
-                        vx: Math.cos(angle) * 4,
-                        vy: Math.sin(angle) * 4,
-                        size: 10
-                    })
+                if (boss.fireTimer % 90 === 0) {
+                    const numBullets = 7
+                    const spread = Math.PI
+                    for (let i = 0; i < numBullets; i++) {
+                        let angle = (i * (spread / (numBullets - 1)))
+                        boss.bullets.push({
+                            x: boss.x + 280,
+                            y: boss.y + 150,
+                            vx: Math.cos(angle) * 4,
+                            vy: Math.sin(angle) * 4,
+                            size: 10
+                        })
+                    }
                 }
-            }
             boss.bullets.forEach((b, index) => {
                 b.x += b.vx
                 b.y += b.vy
-                // Draw bullet
+                    // Draw bullet
                 if (boss == secondboss) {
                     ctx.fillStyle = "#FF00FF"
                 }
@@ -1049,9 +1049,9 @@ $(document).ready(function () {
             }
             drawBossUI(boss, 100)
             boss.active = true
-            // Move boss into view
+                // Move boss into view
             if (boss.y < 50) boss.y += 1
-            // Boss Side-to-Side movement
+                // Boss Side-to-Side movement
             boss.x += boss.speedX
             if (boss.x > canvas.width - 500 || boss.x < 0) boss.speedX *= -1
             if (boss.y >= 50) {
@@ -1059,12 +1059,12 @@ $(document).ready(function () {
                     let bossflag = enemyweights[Math.floor(Math.random() * enemyweights.length)]
                     if (bossflag == enemyIndex) {
                         enemy.timer--
-                        if (enemy.timer <= 0) {
-                            enemy.eypos = boss.y + 100
-                            enemy.expos = boss.x + 125
-                            boss1enemies.push(enemy)
-                            enemy.timer = Math.floor(Math.random() * 300) + 30 * firetimer
-                        }
+                            if (enemy.timer <= 0) {
+                                enemy.eypos = boss.y + 100
+                                enemy.expos = boss.x + 125
+                                boss1enemies.push(enemy)
+                                enemy.timer = Math.floor(Math.random() * 300) + 30 * firetimer
+                            }
                     }
                 })
                 if (!thirdboss.active) {
@@ -1079,53 +1079,53 @@ $(document).ready(function () {
                 }
             }
             ctx.drawImage(boss.img, boss.x, boss.y, 500, 300)
-            // boss hit start
+                // boss hit start
             bullets.forEach((bull, bullindex) => {
-                if (bull.bxpos < boss.x + 400 &&
-                    bull.bxpos + 30 > boss.x &&
-                    bull.bypos < boss.y + 150 &&
-                    bull.bypos + 25 > boss.y) {
-                    bossexplosions.push({
-                        id: blast,
-                        blastxpos: bull.bxpos,
-                        blastypos: bull.bypos,
-                        speed: 1,
-                        timer: 3
-                    })
-                    bullets.splice(bullindex, 1)
-                    boss.health = boss.health - firepowercount - 1
-                }
-            })
-            // boss hit end
-            //  Collision logic start
-            if (!thirdboss.active) {
-                boss1enemies.forEach((enemy, enemyIndex) => {
-                    if (pxpos < enemy.expos + 50 &&
-                        pxpos + 50 > enemy.expos &&
-                        pypos < enemy.eypos + 50 &&
-                        pypos + 50 > enemy.eypos) {
-                        if (isinvincible) {
-                            boss1enemies.splice(enemyIndex, 1)
-                            return
-                        }
-                        if (!isinvincible) {
-                            lifecount--
-                            explosions.push({
-                                id: blast,
-                                blastxpos: enemy.expos,
-                                blastypos: enemy.eypos,
-                                speed: enemy.speed,
-                                timer: 30
-                            })
-                            isinvincible = true
-                            setTimeout(() => {
-                                isinvincible = false
-                            }, 3000)
-                        }
+                    if (bull.bxpos < boss.x + 400 &&
+                        bull.bxpos + 30 > boss.x &&
+                        bull.bypos < boss.y + 150 &&
+                        bull.bypos + 25 > boss.y) {
+                        bossexplosions.push({
+                            id: blast,
+                            blastxpos: bull.bxpos,
+                            blastypos: bull.bypos,
+                            speed: 1,
+                            timer: 3
+                        })
+                        bullets.splice(bullindex, 1)
+                        boss.health = boss.health - firepowercount - 1
                     }
                 })
-                //collision logic 
-                // enemy hit logic start
+                // boss hit end
+                //  Collision logic start
+            if (!thirdboss.active) {
+                boss1enemies.forEach((enemy, enemyIndex) => {
+                        if (pxpos < enemy.expos + 50 &&
+                            pxpos + 50 > enemy.expos &&
+                            pypos < enemy.eypos + 50 &&
+                            pypos + 50 > enemy.eypos) {
+                            if (isinvincible) {
+                                boss1enemies.splice(enemyIndex, 1)
+                                return
+                            }
+                            if (!isinvincible) {
+                                lifecount--
+                                explosions.push({
+                                    id: blast,
+                                    blastxpos: enemy.expos,
+                                    blastypos: enemy.eypos,
+                                    speed: enemy.speed,
+                                    timer: 30
+                                })
+                                isinvincible = true
+                                setTimeout(() => {
+                                    isinvincible = false
+                                }, 3000)
+                            }
+                        }
+                    })
+                    //collision logic 
+                    // enemy hit logic start
                 bullets.forEach((bull, bullindex) => {
                     boss1enemies.forEach((enemy, enemyIndex) => {
                         if (bull.bxpos < enemy.expos + 25 &&
@@ -1154,65 +1154,65 @@ $(document).ready(function () {
                     let bossflag = enemyweights[Math.floor(Math.random() * enemyweights.length)]
                     if (bossflag == enemyIndex) {
                         enemy.timer--
-                        if (enemy.timer <= 0) {
-                            enemy.eypos = thirdboss.y + 100
-                            enemy.expos = thirdboss.x + 125
-                            boss2enemies.push(enemy)
-                            enemy.timer = Math.floor(Math.random() * 300) + 30 * firetimer
-                        }
+                            if (enemy.timer <= 0) {
+                                enemy.eypos = thirdboss.y + 100
+                                enemy.expos = thirdboss.x + 125
+                                boss2enemies.push(enemy)
+                                enemy.timer = Math.floor(Math.random() * 300) + 30 * firetimer
+                            }
                     }
                 })
             }
             // homing logic
             boss2enemies.forEach((m, index) => {
-                let dx = (pxpos + 25) - m.expos
-                let dy = (pypos + 25) - m.eypos
-                let distance = Math.sqrt(dx * dx + dy * dy)
-                if (distance > 1) {
-                    m.expos += (dx / distance) * 5
-                    m.eypos += (dy / distance) * 5
-                }
-                ctx.drawImage(m.id, m.expos, m.eypos, 50, 50)
-                if (m.timer <= 0) {
-                    explosions.push({
-                        id: blast,
-                        blastxpos: m.expos,
-                        blastypos: m.eypos,
-                        speed: 3,
-                        timer: 30
-                    })
-                    boss2enemies.splice(index, 1)
-                }
-                m.timer--
-            })
-            //  Collision logic start
-            boss2enemies.forEach((enemy, enemyIndex) => {
-                if (pxpos < enemy.expos + 50 &&
-                    pxpos + 50 > enemy.expos &&
-                    pypos < enemy.eypos + 50 &&
-                    pypos + 50 > enemy.eypos) {
-                    if (isinvincible) {
-                        return
-                        boss2enemies.splice(enemyIndex, 1)
+                    let dx = (pxpos + 25) - m.expos
+                    let dy = (pypos + 25) - m.eypos
+                    let distance = Math.sqrt(dx * dx + dy * dy)
+                    if (distance > 1) {
+                        m.expos += (dx / distance) * 5
+                        m.eypos += (dy / distance) * 5
                     }
-                    if (!isinvincible) {
-                        lifecount--
+                    ctx.drawImage(m.id, m.expos, m.eypos, 50, 50)
+                    if (m.timer <= 0) {
                         explosions.push({
                             id: blast,
-                            blastxpos: enemy.expos,
-                            blastypos: enemy.eypos,
-                            speed: enemy.speed,
+                            blastxpos: m.expos,
+                            blastypos: m.eypos,
+                            speed: 3,
                             timer: 30
                         })
-                        isinvincible = true
-                        setTimeout(() => {
-                            isinvincible = false
-                        }, 3000)
+                        boss2enemies.splice(index, 1)
                     }
-                }
-            })
-            //collision logic end 
-            // enemy hit logic start
+                    m.timer--
+                })
+                //  Collision logic start
+            boss2enemies.forEach((enemy, enemyIndex) => {
+                    if (pxpos < enemy.expos + 50 &&
+                        pxpos + 50 > enemy.expos &&
+                        pypos < enemy.eypos + 50 &&
+                        pypos + 50 > enemy.eypos) {
+                        if (isinvincible) {
+                            return
+                            boss2enemies.splice(enemyIndex, 1)
+                        }
+                        if (!isinvincible) {
+                            lifecount--
+                            explosions.push({
+                                id: blast,
+                                blastxpos: enemy.expos,
+                                blastypos: enemy.eypos,
+                                speed: enemy.speed,
+                                timer: 30
+                            })
+                            isinvincible = true
+                            setTimeout(() => {
+                                isinvincible = false
+                            }, 3000)
+                        }
+                    }
+                })
+                //collision logic end 
+                // enemy hit logic start
             bullets.forEach((bull, bullindex) => {
                 boss2enemies.forEach((enemy, enemyIndex) => {
                     if (bull.bxpos < enemy.expos + 25 &&
@@ -1349,59 +1349,30 @@ $(document).ready(function () {
             ctx.fillText(".Power ups: Scavenge through power ups left behind by enemies.", canvas.width / 2, canvas.height / 2 + 250)
             ctx.fillStyle = "#2323FF"
             ctx.fillText("Note: Rockets have been set to infinite for checkers to complete game easily.", canvas.width / 2, canvas.height / 2 + 300)
-
-            window.addEventListener("keydown", function (e) {
+            window.addEventListener("touchstart", function() {
+                if (!isStarted) {
+                    isStarted = true;
+                }
+            }, { passive: false });
+            window.addEventListener("keydown", function(e) {
                 if (e.key.toLowerCase() === "s") {
                     if (!isStarted) {
                         isStarted = true
                     }
                 }
             })
-            canvas.addEventListener("mousedown", function () {
+            canvas.addEventListener("mousedown", function() {
                 if (!isStarted) {
                     isStarted = true
                 }
+
             })
         }
 
-        function setupMobileControls() {
-            const handleTouch = (id, keyName) => {
-                const btn = document.getElementById(id);
-                if (!btn) return; // Safety check
-
-                btn.addEventListener('touchstart', (e) => {
-                    e.preventDefault();
-                    keys[keyName] = true;
-                    if (!isStarted) isStarted = true;
-                }, { passive: false });
-
-                btn.addEventListener('touchend', (e) => {
-                    e.preventDefault();
-                    keys[keyName] = false;
-                }, { passive: false });
-            };
 
 
-            handleTouch('up-btn', 'ArrowUp');
-            handleTouch('down-btn', 'ArrowDown');
-            handleTouch('left-btn', 'ArrowLeft');
-            handleTouch('right-btn', 'ArrowRight');
 
-            const fireBtn = document.getElementById('fire-btn');
-            fireBtn.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                keys.Spacebar = true;
-                if (!isStarted) isStarted = true;
-            }, { passive: false });
-            fireBtn.addEventListener('touchend', () => keys.Spacebar = false);
 
-            const rocketBtn = document.getElementById('rocket-btn');
-            rocketBtn.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                keys.Enter = true;
-            }, { passive: false });
-            rocketBtn.addEventListener('touchend', () => keys.Enter = false);
-        }
         function checkBossCollision(boss, width, height) {
             if (pxpos < boss.x + width &&
                 pxpos + 50 > boss.x &&
@@ -1426,9 +1397,54 @@ $(document).ready(function () {
             }
         }
         requestAnimationFrame(animate)
-        setupMobileControls()
+
     }
 
+    function setupMobileControls() {
+        const handleTouch = (id, keyName) => {
+            const btn = document.getElementById(id);
+            if (!btn) return; // Safety check
 
+            btn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                keys[keyName] = true;
+                if (!isStarted) isStarted = true;
+
+            }, { passive: false });
+
+            btn.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                keys[keyName] = false;
+            }, { passive: false });
+        };
+        const restartBtn = document.getElementById('restart-btn');
+        if (restartBtn) {
+            restartBtn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                location.reload();
+            }, { passive: false });
+        }
+
+        handleTouch('up-btn', 'ArrowUp');
+        handleTouch('down-btn', 'ArrowDown');
+        handleTouch('left-btn', 'ArrowLeft');
+        handleTouch('right-btn', 'ArrowRight');
+
+        const fireBtn = document.getElementById('fire-btn');
+        fireBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            keys.Spacebar = true;
+            if (!isStarted) isStarted = true;
+        }, { passive: false });
+        fireBtn.addEventListener('touchend', () => keys.Spacebar = false);
+
+        const rocketBtn = document.getElementById('rocket-btn');
+        rocketBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            keys.Enter = true;
+        }, { passive: false });
+        rocketBtn.addEventListener('touchend', () => keys.Enter = false);
+    }
+    setupMobileControls()
     animate()
 })
